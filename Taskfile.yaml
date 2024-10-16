@@ -1,0 +1,101 @@
+version: '3'
+
+env:
+  CERT_MANAGER_VERSION: 1.15.3
+  ARGOCD_VERSION: 7.4.4
+
+tasks:
+  ###################################################################################################################
+  ## Default task
+  ###################################################################################################################
+  default:
+    cmds:
+      - task --list-all
+  
+  ###################################################################################################################
+  ## Create Kubneretes cluster and install required applications
+  ###################################################################################################################
+  initial_setup:
+    cmds:
+      - task: create_aliasses
+      - task: create_cluster
+      - task: install_cert_manager
+      - task: install_argocd
+
+  create_aliasses:
+    desc: "Create kubectl aliasses"
+    silent: true
+    cmds:
+      - echo "" >> /home/vscode/.bashrc
+      - echo "alias k='kubectl'" >> /home/vscode/.bashrc
+      - echo "alias kns='kubens'" >> /home/vscode/.bashrc
+      - echo "alias kctx='kubectx'" >> /home/vscode/.bashrc
+      - echo "alias kgp='kubectl get pods'" >> /home/vscode/.bashrc
+      - echo "alias kgs='kubectl get svc'" >> /home/vscode/.bashrc
+      - echo "alias kgn='kubectl get nodes'" >> /home/vscode/.bashrc
+      - echo "alias keti='kubectl exec -ti'" >> /home/vscode/.bashrc
+      - source /home/vscode/.bashrc
+
+  create_cluster:
+    env:
+      ARGOCD_CLUSTER_EXISTS:
+        sh: k3d cluster list | grep argocd | wc -l | tr -d ' '
+    desc: "Initial setup"
+    silent: true
+    cmds:
+      - |
+        if [[ "$ARGOCD_CLUSTER_EXISTS" == "0" ]]; then
+          gum log -s -l info -t ansic "Creating a new argocd cluster"
+          gum spin -s minidot --title="Create cluster" -- k3d cluster create argocd -c ./k3d/argocd.yaml
+        else
+          gum log -s -l info -t ansic "ArgoCD cluster already exists"
+        fi
+
+  install_cert_manager:
+    env:
+      CERT_MANAGER_INSTALLED:
+        sh: helm list -n cert-manager | grep cert-manager | wc -l | tr -d ' '
+    desc: "Install cert-manager"
+    silent: true
+    cmds:
+      - |
+        if [[ "$CERT_MANAGER_INSTALLED" == "0" ]]; then
+          gum log -s -l info -t ansic "Installing Cert-Manager"
+          gum spin -s minidot --title="Install Cert Manager" -- helm install cert-manager cert-manager --repo https://charts.jetstack.io --version $CERT_MANAGER_VERSION --namespace cert-manager --create-namespace --set installCRDs=true --wait
+        else
+          gum log -s -l info -t ansic "Cert-Manager already installed"
+        fi
+  
+  install_argocd:
+    env:
+      ARGOCD_INSTALLED:
+        sh: helm list -n argocd | grep argocd | wc -l | tr -d ' '
+    desc: "Install ArgoCD"
+    silent: true
+    cmds:
+      - |
+        if [[ "$ARGOCD_INSTALLED" == "0" ]]; then
+          gum log -s -l info -t ansic "Installing ArgoCD"
+          gum spin -s minidot --title="Install ArgoCD" -- helm install argocd argo-cd --repo https://argoproj.github.io/argo-helm --version $ARGOCD_VERSION --namespace argocd --create-namespace --set 'configs.secret.argocdServerAdminPassword=$2a$10$5vm8wXaSdbuff0m9l21JdevzXBzJFPCi8sy6OOnpZMAG.fOXL7jvO' --set dex.enabled=false --set notifications.enabled=false --set server.service.type=NodePort --set server.service.nodePortHttp=31443 --set server.extensions.enabled=true --set 'server.extensions.contents[0].name=argo-rollouts' --set 'server.extensions.contents[0].url=https://github.com/argoproj-labs/rollout-extension/releases/download/v0.3.3/extension.tar' --wait
+        else
+          gum log -s -l info -t ansic "ArgoCD already installed"
+        fi
+
+  ###################################################################################################################
+  ## Cleanup scripts
+  ###################################################################################################################
+  cleanup_full:
+    env:
+      ARGOCD_CLUSTER_EXISTS:
+        sh: k3d cluster list | grep argocd | wc -l | tr -d ' '
+    desc: "Initial setup"
+    silent: true
+    cmds:
+      - |
+        if [[ "$ARGOCD_CLUSTER_EXISTS" == "0" ]]; then
+          gum log -s -l info -t ansic "ArgoCD cluster does not exist"
+        else
+          gum log -s -l info -t ansic "ArgoCD cluster exists, start cleanup"
+          k3d cluster delete argocd
+        fi
+      
