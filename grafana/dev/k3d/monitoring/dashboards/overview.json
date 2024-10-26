@@ -1,0 +1,1763 @@
+{
+   "_config": {
+      "SLOs": {
+         "apiserver": {
+            "days": 30,
+            "target": 0.98999999999999999,
+            "windows": [
+               {
+                  "factor": 14.4,
+                  "for": "2m",
+                  "long": "1h",
+                  "severity": "critical",
+                  "short": "5m"
+               },
+               {
+                  "factor": 6,
+                  "for": "15m",
+                  "long": "6h",
+                  "severity": "critical",
+                  "short": "30m"
+               },
+               {
+                  "factor": 3,
+                  "for": "1h",
+                  "long": "1d",
+                  "severity": "warning",
+                  "short": "2h"
+               },
+               {
+                  "factor": 1,
+                  "for": "3h",
+                  "long": "3d",
+                  "severity": "warning",
+                  "short": "6h"
+               }
+            ]
+         }
+      },
+      "alert_aggregation_labels": "cluster, namespace",
+      "alert_aggregation_rule_prefix": "cluster_namespace",
+      "alert_aggregation_variables": "{{ $labels.cluster }}/{{ $labels.namespace }}",
+      "alert_excluded_routes": [
+         "debug_pprof"
+      ],
+      "alertmanager_alerts": {
+         "baremetal": {
+            "memory_allocation": "(process_resident_memory_bytes{job=~\".*/alertmanager\"} / on(%(per_instance_label)s) node_memory_MemTotal_bytes{}) > %(threshold)s\n"
+         },
+         "kubernetes": {
+            "memory_allocation": "(container_memory_working_set_bytes{container=\"alertmanager\"} / container_spec_memory_limit_bytes{container=\"alertmanager\"}) > %(threshold)s\nand\n(container_spec_memory_limit_bytes{container=\"alertmanager\"} > 0)\n"
+         }
+      },
+      "alertmanager_im_enabled": false,
+      "alerts": {
+         "compactions_per_hour_failed": 2,
+         "flushes_per_hour_failed": 2,
+         "max_tenant_index_age_seconds": 600,
+         "outstanding_blocks_critical": 250,
+         "outstanding_blocks_warning": 100,
+         "p99_request_exclude_regex": "metrics|/frontend.Frontend/Process|debug_pprof",
+         "p99_request_threshold_seconds": 3,
+         "polls_per_hour_failed": 2,
+         "user_configurable_overrides_polls_per_hour_failed": 5
+      },
+      "all_instances": "distributor|ingester|mimir-write|query-frontend|querier|ruler-query-frontend|ruler-querier|mimir-read|query-scheduler|ruler-query-scheduler|ruler|store-gateway|compactor|alertmanager|overrides-exporter|mimir-backend",
+      "autoscaling": {
+         "distributor": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-distributor"
+         },
+         "gateway": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-cortex-gw.*"
+         },
+         "querier": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-querier"
+         },
+         "query_frontend": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-query-frontend"
+         },
+         "ruler": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-ruler"
+         },
+         "ruler_querier": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-ruler-querier"
+         },
+         "ruler_query_frontend": {
+            "enabled": false,
+            "hpa_name": "keda-hpa-ruler-query-frontend"
+         }
+      },
+      "autoscaling_hpa_prefix": "keda-hpa-",
+      "cadvisorSelector": "job=\"kubelet\"",
+      "certExpirationCriticalSeconds": 86400,
+      "certExpirationWarningSeconds": 604800,
+      "certManagerCertExpiryDays": "21",
+      "certManagerJobLabel": "cert-manager",
+      "certManagerRunbookURLPattern": "https://github.com/imusmanmalik/cert-manager-mixin/blob/main/RUNBOOK.md#%s",
+      "clusterLabel": "cluster",
+      "cluster_labels": [
+         "cluster",
+         "namespace"
+      ],
+      "cluster_selectors": [
+         "cluster",
+         "namespace"
+      ],
+      "container_names": {
+         "alertmanager": "alertmanager",
+         "alertmanager_im": "alertmanager-im",
+         "backend": "query-scheduler|ruler-query-scheduler|ruler|store-gateway|compactor|alertmanager|overrides-exporter|mimir-backend",
+         "compactor": "compactor",
+         "distributor": "distributor",
+         "gateway": "(gateway|cortex-gw|cortex-gw-internal)",
+         "ingester": "ingester",
+         "mimir_backend": "mimir-backend",
+         "mimir_read": "mimir-read",
+         "mimir_write": "mimir-write",
+         "querier": "querier",
+         "query_frontend": "query-frontend",
+         "query_scheduler": "query-scheduler",
+         "read": "query-frontend|querier|ruler-query-frontend|ruler-querier|mimir-read",
+         "ruler": "ruler",
+         "ruler_querier": "ruler-querier",
+         "ruler_query_frontend": "ruler-query-frontend",
+         "ruler_query_scheduler": "ruler-query-scheduler",
+         "store_gateway": "store-gateway",
+         "write": "distributor|ingester|mimir-write"
+      },
+      "containerfsSelector": "container!=\"\"",
+      "cortex_p99_latency_threshold_seconds": 2.5,
+      "cpuHighUsageThreshold": 90,
+      "cpuThrottlingPercent": 25,
+      "cpuThrottlingSelector": "",
+      "dashboardNamePrefix": "Node Exporter / ",
+      "dashboardTags": [
+         "node-exporter-mixin"
+      ],
+      "dashboard_datasource": "default",
+      "dashboard_prefix": "Mimir / ",
+      "dashboard_variables": {
+         "cluster_query": "cortex_build_info",
+         "job_query": "cortex_build_info",
+         "namespace_query": "cortex_build_info{cluster=~\"$cluster\"}"
+      },
+      "dashboards": {
+         "certmanagerCertificateExpirationTimestampSecondsSelector": "cluster=\"$cluster\"",
+         "certmanagerCertificateReadyStatusSelector": "cluster=\"$cluster\"",
+         "certmanagerControllerSyncCallCountSelector": "cluster=\"$cluster\"",
+         "certmanagerHttpAcmeClientRequestCountSelector": "cluster=\"$cluster\"",
+         "certmanagerHttpAcmeClientRequestDurationSecondsCountSelector": "cluster=\"$cluster\"",
+         "certmanagerHttpAcmeClientRequestDurationSecondsSumSelector": "cluster=\"$cluster\"",
+         "clusterVariableSelector": "",
+         "containerCPUUsageSecondsTotalSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "containerCpuCfsPeriodsTotalSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "containerCpuCfsThrottledPeriodsTotalSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "containerMemoryUsageBytesSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "containerNetworkReceiveBytesTotalSelector": "namespace=\"cert-manager\", cluster=\"$cluster\"",
+         "containerNetworkTransmitBytesTotalSelector": "namespace=\"cert-manager\", cluster=\"$cluster\"",
+         "containerSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "defaultSelector": "cluster=\"$cluster\"",
+         "enableMultiCluster": true,
+         "kubePodContainerResourceLimitsCpuCoresSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "kubePodContainerResourceLimitsMemoryBytesSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "kubePodContainerResourceRequestsCpuCoresSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "kubePodContainerResourceRequestsMemoryBytesSelector": "container=\"cert-manager\", cluster=\"$cluster\"",
+         "namespaceSelector": "namespace=\"cert-manager\", cluster=\"$cluster\""
+      },
+      "datasourceFilterRegex": "",
+      "datasourceName": "mimir",
+      "datasource_regex": "",
+      "deployment_type": "kubernetes",
+      "diskDeviceSelector": "device!=\"\"",
+      "diskDevices": [
+         "mmcblk.p.+",
+         "nvme.+",
+         "rbd.+",
+         "sd.+",
+         "vd.+",
+         "xvd.+",
+         "dm-.+",
+         "dasd.+"
+      ],
+      "diskIOSaturationThreshold": 10,
+      "extraServiceNames": [ ],
+      "fsMountpointSelector": "mountpoint!=\"\"",
+      "fsSelector": "fstype!=\"\"",
+      "fsSpaceAvailableCriticalThreshold": 3,
+      "fsSpaceAvailableWarningThreshold": 5,
+      "fsSpaceFillingUpCriticalThreshold": 20,
+      "fsSpaceFillingUpPredictionWindow": "6h",
+      "fsSpaceFillingUpWarningThreshold": 40,
+      "fstypeSelector": "fstype=~\"ext[234]|btrfs|xfs|zfs\"",
+      "fstypes": [
+         "ext[234]",
+         "btrfs",
+         "xfs",
+         "zfs"
+      ],
+      "gateway_enabled": false,
+      "grafana72": true,
+      "grafanaDashboardIDs": {
+         "apiserver.json": "eswbt59QCroA3XLdKFvdOHlKB8Iks3h7d2ohstxr",
+         "controller-manager.json": "5g73oHG0pCRz4X1t6gNYouVUv9urrQd4wCdHR2mI",
+         "k8s-cluster-rsrc-use.json": "uXQldxzqUNgIOUX6FyZNvqgP2vgYb78daNu4GiDc",
+         "k8s-multicluster-rsrc-use.json": "NJ9AlnsObVgj9uKiJMeAqfzMi1wihOMupcsDhlhR",
+         "k8s-node-rsrc-use.json": "E577CMUOwmPsxVVqM9lj40czM1ZPjclw7hGa7OT7",
+         "k8s-resources-cluster.json": "ZnbvYbcXkob7GLqcDPLTj1ZL4MRX87tOh8xdr831",
+         "k8s-resources-multicluster.json": "1gBgaexoVZ4TpBNAt2eGRsc4LNjNhdjcZd6cqU6S",
+         "k8s-resources-namespace.json": "XaY4UCP3J51an4ikqtkUGBSjLpDW4pg39xe2FuxP",
+         "k8s-resources-pod.json": "wU56sdGSNYZTL3eO0db3pONtVmTvsyV7w8aadbYF",
+         "k8s-resources-windows-cluster.json": "4d08557fd9391b100730f2494bccac68",
+         "k8s-resources-windows-namespace.json": "490b402361724ab1d4c45666c1fa9b6f",
+         "k8s-resources-windows-pod.json": "40597a704a610e936dc6ed374a7ce023",
+         "k8s-resources-workload.json": "hZCNbUPfUqjc95N3iumVsaEVHXzaBr3IFKRFvUJf",
+         "k8s-resources-workloads-namespace.json": "L29WgMrccBDauPs3Xsti3fwaKjMB6fReufWj6Gl1",
+         "k8s-windows-cluster-rsrc-use.json": "53a43377ec9aaf2ff64dfc7a1f539334",
+         "k8s-windows-node-rsrc-use.json": "96e7484b0bb53b74fbc2bcb7723cd40b",
+         "kubelet.json": "B1azll2ETo7DTiM8CysrH6g4s5NCgkOz6ZdU8Q0j",
+         "nodes.json": "kcb9C2QDe4IYcjiTOmYyfhsImuzxRcvwWC3YLJPS",
+         "persistentvolumesusage.json": "AhCeikee0xoa6faec0Weep2nee6shaiquigahw8b",
+         "pods.json": "AMK9hS0rSbSz7cKjPHcOtk6CGHFjhSHwhbQ3sedK",
+         "proxy.json": "hhT4orXD1Ott4U1bNNps0R26EHTwMypdcaCjDRPM",
+         "scheduler.json": "4uMPZ9jmwvYJcM5fcNcNrrt9Sf6ufQL4IKFri2Gp",
+         "statefulset.json": "dPiBt0FRG5BNYo0XJ4L0Meoc7DWs9eL40c1CRc1g"
+      },
+      "grafanaExternalUrl": "https://grafana.mgmt.vintecc.cloud",
+      "grafanaIntervalVar": "$__rate_interval",
+      "grafanaK8s": {
+         "dashboardNamePrefix": "Kubernetes / ",
+         "dashboardTags": [
+            "kubernetes-mixin"
+         ],
+         "grafanaTimezone": "UTC",
+         "linkPrefix": "",
+         "minimumTimeInterval": "1m",
+         "refresh": "10s"
+      },
+      "graph_tooltip": 1,
+      "group_by_cluster": "cluster, namespace",
+      "group_by_job": "cluster, namespace, job",
+      "group_by_tenant": "cluster, namespace, tenant",
+      "group_prefix_clusters": "cluster_namespace",
+      "group_prefix_jobs": "cluster_namespace_job",
+      "group_prefix_tenants": "cluster_namespace_tenant",
+      "hostMountpointSelector": "mountpoint=\"/\"",
+      "hostNetworkInterfaceSelector": "device!~\"veth.+\"",
+      "http_api_prefix": "",
+      "ignoringOverprovisionedWorkloadSelector": "",
+      "ingester_alerts": {
+         "baremetal": {
+            "memory_allocation": "(\n  process_resident_memory_bytes{job=~\".*/(%(ingester)s|%(mimir_write)s|%(mimir_backend)s)\"}\n    /\n  on(%(per_instance_label)s) node_memory_MemTotal_bytes{}\n) > %(threshold)s\n"
+         },
+         "kubernetes": {
+            "memory_allocation": "(\n  # We use RSS instead of working set memory because of the ingester's extensive usage of mmap.\n  # See: https://github.com/grafana/mimir/issues/2466\n  container_memory_rss{container=~\"(%(ingester)s|%(mimir_write)s|%(mimir_backend)s)\"}\n    /\n  ( container_spec_memory_limit_bytes{container=~\"(%(ingester)s|%(mimir_write)s|%(mimir_backend)s)\"} > 0 )\n)\n# Match only Mimir namespaces.\n* on(%(alert_aggregation_labels)s) group_left max by(%(alert_aggregation_labels)s) (cortex_build_info)\n> %(threshold)s\n"
+         }
+      },
+      "injectRows": { },
+      "instance_data_mountpoint": "/",
+      "instance_names": {
+         "alertmanager": "(.*mimir-)?alertmanager.*",
+         "alertmanager_im": "(.*mimir-)?alertmanager-im.*",
+         "backend": "(.*mimir-)?(query-scheduler|ruler-query-scheduler|ruler|store-gateway|compactor|alertmanager|overrides-exporter|mimir-backend).*",
+         "compactor": "(.*mimir-)?compactor.*",
+         "distributor": "(.*mimir-)?distributor.*",
+         "gateway": "(.*mimir-)?(gateway|cortex-gw|cortex-gw-internal).*",
+         "ingester": "(.*mimir-)?ingester.*",
+         "mimir_backend": "(.*mimir-)?mimir-backend.*",
+         "mimir_read": "(.*mimir-)?mimir-read.*",
+         "mimir_write": "(.*mimir-)?mimir-write.*",
+         "overrides_exporter": "(.*mimir-)?overrides-exporter.*",
+         "querier": "(.*mimir-)?querier.*",
+         "query_frontend": "(.*mimir-)?query-frontend.*",
+         "query_scheduler": "(.*mimir-)?query-scheduler.*",
+         "read": "(.*mimir-)?(query-frontend|querier|ruler-query-frontend|ruler-querier|mimir-read).*",
+         "ruler": "(.*mimir-)?ruler.*",
+         "ruler_querier": "(.*mimir-)?ruler-querier.*",
+         "ruler_query_frontend": "(.*mimir-)?ruler-query-frontend.*",
+         "ruler_query_scheduler": "(.*mimir-)?ruler-query-scheduler.*",
+         "store_gateway": "(.*mimir-)?store-gateway.*",
+         "write": "(.*mimir-)?(distributor|ingester|mimir-write).*"
+      },
+      "job_labels": [
+         "cluster",
+         "namespace",
+         "job"
+      ],
+      "job_names": {
+         "alertmanager": [
+            "alertmanager",
+            "cortex",
+            "mimir",
+            "mimir-backend.*"
+         ],
+         "backend": [
+            "ruler",
+            "query-scheduler.*",
+            "ruler-query-scheduler.*",
+            "store-gateway.*",
+            "compactor.*",
+            "alertmanager",
+            "overrides-exporter",
+            "mimir-backend.*"
+         ],
+         "compactor": [
+            "compactor.*",
+            "cortex",
+            "mimir",
+            "mimir-backend.*"
+         ],
+         "distributor": [
+            "distributor.*",
+            "cortex",
+            "mimir",
+            "mimir-write.*"
+         ],
+         "gateway": [
+            "gateway",
+            "cortex-gw.*"
+         ],
+         "ingester": [
+            "ingester.*",
+            "cortex",
+            "mimir",
+            "mimir-write.*"
+         ],
+         "overrides_exporter": [
+            "overrides-exporter",
+            "mimir-backend.*"
+         ],
+         "querier": [
+            "querier.*",
+            "cortex",
+            "mimir",
+            "mimir-read.*"
+         ],
+         "query_frontend": [
+            "query-frontend.*",
+            "cortex",
+            "mimir",
+            "mimir-read.*"
+         ],
+         "query_scheduler": [
+            "query-scheduler.*",
+            "mimir-backend.*"
+         ],
+         "read": [
+            "query-frontend.*",
+            "querier.*",
+            "ruler-query-frontend.*",
+            "ruler-querier.*",
+            "mimir-read.*"
+         ],
+         "ring_members": [
+            "admin-api",
+            "alertmanager",
+            "compactor.*",
+            "distributor.*",
+            "ingester.*",
+            "querier.*",
+            "ruler",
+            "ruler-querier.*",
+            "store-gateway.*",
+            "cortex",
+            "mimir",
+            "mimir-write.*",
+            "mimir-read.*",
+            "mimir-backend.*"
+         ],
+         "ruler": [
+            "ruler",
+            "cortex",
+            "mimir",
+            "mimir-backend.*"
+         ],
+         "ruler_querier": [
+            "ruler-querier.*"
+         ],
+         "ruler_query_frontend": [
+            "ruler-query-frontend.*"
+         ],
+         "ruler_query_scheduler": [
+            "ruler-query-scheduler.*"
+         ],
+         "store_gateway": [
+            "store-gateway.*",
+            "cortex",
+            "mimir",
+            "mimir-backend.*"
+         ],
+         "write": [
+            "distributor.*",
+            "ingester.*",
+            "mimir-write.*"
+         ]
+      },
+      "job_prefix": "($namespace)/",
+      "job_selectors": [
+         "cluster",
+         "namespace",
+         "job"
+      ],
+      "jobs": {
+         "compactor": "compactor",
+         "distributor": "distributor",
+         "gateway": "cortex-gw(-internal)?",
+         "ingester": "ingester",
+         "metrics_generator": "metrics-generator",
+         "querier": "querier",
+         "query_frontend": "query-frontend"
+      },
+      "kubeAPILatencyWarningSeconds": 1,
+      "kubeApiserverNonStreamingSelector": "subresource!~\"proxy|attach|log|exec|portforward\"",
+      "kubeApiserverReadClusterLatency": "30",
+      "kubeApiserverReadNamespaceLatency": "5",
+      "kubeApiserverReadResourceLatency": "1",
+      "kubeApiserverReadSelector": "verb=~\"LIST|GET\"",
+      "kubeApiserverSelector": "job=\"kube-apiserver\"",
+      "kubeApiserverWriteLatency": "1",
+      "kubeApiserverWriteSelector": "verb=~\"POST|PUT|PATCH|DELETE\"",
+      "kubeControllerManagerSelector": "job=\"kube-controller-manager\"",
+      "kubeJobTimeoutDuration": 43200,
+      "kubeNodeUnreachableIgnoreKeys": [
+         "ToBeDeletedByClusterAutoscaler",
+         "cloud.google.com/impending-node-termination",
+         "aws-node-termination-handler/spot-itn"
+      ],
+      "kubeProxySelector": "job=\"kube-proxy\"",
+      "kubeSchedulerSelector": "job=\"kube-scheduler\"",
+      "kubeStateMetricsSelector": "job=\"kube-state-metrics\"",
+      "kubeletCertExpirationCriticalSeconds": 86400,
+      "kubeletCertExpirationWarningSeconds": 604800,
+      "kubeletSelector": "job=\"kubelet\"",
+      "memoryHighUtilizationThreshold": 90,
+      "memoryMajorPagesFaultsThreshold": 500,
+      "mimir_scaling_rules": {
+         "baremetal": {
+            "actual_replicas_count": "sum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    cortex_build_info{namespace=\"baremetal\"},\n    \"deployment\", \"$1\", \"job\", \"baremetal/(.*)\"\n  )\n)\n",
+            "cpu_required_replicas_count": "ceil(\n  %(alert_aggregation_rule_prefix)s_deployment:actual_replicas:count\n    *\n  quantile_over_time(0.99, %(alert_aggregation_rule_prefix)s_deployment:container_cpu_usage_seconds_total:sum_rate[24h])\n    /\n  %(alert_aggregation_rule_prefix)s_deployment:kube_pod_container_resource_requests_cpu_cores:sum\n    /\n  %(resource_threshold)s\n)\n",
+            "cpu_usage_seconds_total": "sum by (%(alert_aggregation_labels)s, deployment) (\n  irate(\n    label_replace(\n      process_cpu_seconds_total{namespace=\"baremetal\"},\n      \"deployment\", \"$1\", \"job\", \"baremetal/(.*)\"\n    )[5m:]\n  )\n)\n",
+            "memory_requests": "sum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    node_memory_MemTotal_bytes,\n    \"deployment\", \"$1\", \"instance\", \".*(%(all_instances)s).*\"\n  )\n)\n",
+            "memory_required_replicas_count": "ceil(\n  %(alert_aggregation_rule_prefix)s_deployment:actual_replicas:count\n    *\n  quantile_over_time(0.99, %(alert_aggregation_rule_prefix)s_deployment:container_memory_usage_bytes:sum[24h])\n    /\n  %(alert_aggregation_rule_prefix)s_deployment:kube_pod_container_resource_requests_memory_bytes:sum\n    /\n  %(resource_threshold)s\n)\n",
+            "memory_usage": "sum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    process_resident_memory_bytes{namespace=\"baremetal\"},\n    \"deployment\", \"$1\", \"job\", \"baremetal/(.*)\"\n  )\n)\n",
+            "resource_requests_cpu_cores": "sum by (%(alert_aggregation_labels)s, deployment) (\n  count without(cpu, mode) (\n    label_replace(\n      node_cpu_seconds_total{mode=\"idle\"},\n      \"deployment\", \"$1\", \"instance\", \".*(%(all_instances)s).*\"\n    )\n  )\n)\n"
+         },
+         "kubernetes": {
+            "actual_replicas_count": "# Convenience rule to get the number of replicas for both a deployment and a statefulset.\n# Multi-zone deployments are grouped together removing the \"zone-X\" suffix.\nsum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    kube_deployment_spec_replicas,\n    # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n    # always matches everything and the (optional) zone is not removed.\n    \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n  )\n)\nor\nsum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(kube_statefulset_replicas, \"deployment\", \"$1\", \"statefulset\", \"(.*?)(?:-zone-[a-z])?\")\n)\n",
+            "cpu_required_replicas_count": "# Jobs should be sized to their CPU usage.\n# We do this by comparing 99th percentile usage over the last 24hrs to\n# their current provisioned #replicas and resource requests.\nceil(\n  %(alert_aggregation_rule_prefix)s_deployment:actual_replicas:count\n    *\n  quantile_over_time(0.99, %(alert_aggregation_rule_prefix)s_deployment:container_cpu_usage_seconds_total:sum_rate[24h])\n    /\n  %(alert_aggregation_rule_prefix)s_deployment:kube_pod_container_resource_requests_cpu_cores:sum\n)\n",
+            "cpu_usage_seconds_total": "sum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    label_replace(\n      sum by (%(alert_aggregation_labels)s, %(per_instance_label)s)(rate(container_cpu_usage_seconds_total[1m])),\n      \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n    ),\n    # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n    # always matches everything and the (optional) zone is not removed.\n    \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n  )\n)\n",
+            "memory_requests": "# Convenience rule to get the Memory request for both a deployment and a statefulset.\n# Multi-zone deployments are grouped together removing the \"zone-X\" suffix.\n# This recording rule is made compatible with the breaking changes introduced in kube-state-metrics v2\n# that remove resource metrics, ref:\n# - https://github.com/kubernetes/kube-state-metrics/blob/master/CHANGELOG.md#v200-alpha--2020-09-16\n# - https://github.com/kubernetes/kube-state-metrics/pull/1004\n#\n# This is the old expression, compatible with kube-state-metrics < v2.0.0,\n# where kube_pod_container_resource_requests_memory_bytes was removed:\n(\n  sum by (%(alert_aggregation_labels)s, deployment) (\n    label_replace(\n      label_replace(\n        kube_pod_container_resource_requests_memory_bytes,\n        \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n      ),\n      # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n      # always matches everything and the (optional) zone is not removed.\n      \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n    )\n  )\n)\nor\n# This expression is compatible with kube-state-metrics >= v1.4.0,\n# where kube_pod_container_resource_requests was introduced.\n(\n  sum by (%(alert_aggregation_labels)s, deployment) (\n    label_replace(\n      label_replace(\n        kube_pod_container_resource_requests{resource=\"memory\"},\n        \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n      ),\n      # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n      # always matches everything and the (optional) zone is not removed.\n      \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n    )\n  )\n)\n",
+            "memory_required_replicas_count": "# Jobs should be sized to their Memory usage.\n# We do this by comparing 99th percentile usage over the last 24hrs to\n# their current provisioned #replicas and resource requests.\nceil(\n  %(alert_aggregation_rule_prefix)s_deployment:actual_replicas:count\n    *\n  quantile_over_time(0.99, %(alert_aggregation_rule_prefix)s_deployment:container_memory_usage_bytes:sum[24h])\n    /\n  %(alert_aggregation_rule_prefix)s_deployment:kube_pod_container_resource_requests_memory_bytes:sum\n)\n",
+            "memory_usage": "# Convenience rule to get the Memory utilization for both a deployment and a statefulset.\n# Multi-zone deployments are grouped together removing the \"zone-X\" suffix.\nsum by (%(alert_aggregation_labels)s, deployment) (\n  label_replace(\n    label_replace(\n      container_memory_usage_bytes{image!=\"\"},\n      \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n    ),\n    # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n    # always matches everything and the (optional) zone is not removed.\n    \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n  )\n)\n",
+            "resource_requests_cpu_cores": "# Convenience rule to get the CPU request for both a deployment and a statefulset.\n# Multi-zone deployments are grouped together removing the \"zone-X\" suffix.\n# This recording rule is made compatible with the breaking changes introduced in kube-state-metrics v2\n# that remove resource metrics, ref:\n# - https://github.com/kubernetes/kube-state-metrics/blob/master/CHANGELOG.md#v200-alpha--2020-09-16\n# - https://github.com/kubernetes/kube-state-metrics/pull/1004\n#\n# This is the old expression, compatible with kube-state-metrics < v2.0.0,\n# where kube_pod_container_resource_requests_cpu_cores was removed:\n(\n  sum by (%(alert_aggregation_labels)s, deployment) (\n    label_replace(\n      label_replace(\n        kube_pod_container_resource_requests_cpu_cores,\n        \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n      ),\n      # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n      # always matches everything and the (optional) zone is not removed.\n      \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n    )\n  )\n)\nor\n# This expression is compatible with kube-state-metrics >= v1.4.0,\n# where kube_pod_container_resource_requests was introduced.\n(\n  sum by (%(alert_aggregation_labels)s, deployment) (\n    label_replace(\n      label_replace(\n        kube_pod_container_resource_requests{resource=\"cpu\"},\n        \"deployment\", \"$1\", \"%(per_instance_label)s\", \"(.*)-(?:([0-9]+)|([a-z0-9]+)-([a-z0-9]+))\"\n      ),\n      # The question mark in \"(.*?)\" is used to make it non-greedy, otherwise it\n      # always matches everything and the (optional) zone is not removed.\n      \"deployment\", \"$1\", \"deployment\", \"(.*?)(?:-zone-[a-z])?\"\n    )\n  )\n)\n"
+         }
+      },
+      "namespace": ".*",
+      "namespaceLabel": "namespace",
+      "namespaceOvercommitFactor": 1.5,
+      "namespaceSelector": null,
+      "namespace_selector_separator": "/",
+      "nodeCriticalSeverity": "critical",
+      "nodeExporterSelector": "job=\"prometheus-node-exporter\"",
+      "notKubeDnsCoreDnsSelector": "job!~\"kube-dns|coredns\"",
+      "per_cluster_label": "cluster",
+      "per_instance_label": "pod",
+      "per_job_label": "job",
+      "per_namespace_label": "namespace",
+      "per_node_label": "instance",
+      "podLabel": "pod",
+      "prefixedNamespaceSelector": "",
+      "product": "Mimir",
+      "pvExcludedSelector": "label_excluded_from_alerts=\"true\"",
+      "rateInterval": "5m",
+      "recording_rules_range_interval": "1m",
+      "resource_threshold": 0.66000000000000003,
+      "resources_dashboards_enabled": true,
+      "resources_panel_queries": {
+         "baremetal": {
+            "cpu_usage": "sum by(%(instanceLabel)s) (rate(node_cpu_seconds_total{mode=\"user\",%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]))",
+            "disk_reads": "sum by(%(nodeLabel)s, %(instanceLabel)s, device) (\n  rate(\n    node_disk_read_bytes_total{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]\n  )\n)\n",
+            "disk_utilization": "1 - ((node_filesystem_avail_bytes{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\", mountpoint=\"%(instanceDataDir)s\"})\n    / node_filesystem_size_bytes{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\", mountpoint=\"%(instanceDataDir)s\"})\n",
+            "disk_writes": "sum by(%(nodeLabel)s, %(instanceLabel)s, device) (\n  rate(\n    node_disk_written_bytes_total{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]\n  )\n)\n",
+            "memory_go_heap_usage": "sum by(%(instanceLabel)s) (go_memstats_heap_inuse_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"})",
+            "memory_rss_usage": "node_memory_Active_anon_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n+ node_memory_SwapCached_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n",
+            "memory_working_usage": "node_memory_MemTotal_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_MemFree_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_Buffers_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_Cached_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_Slab_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_PageTables_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n- node_memory_SwapCached_bytes{%(namespace)s,%(instanceLabel)s=~\"%(instanceName)s\"}\n",
+            "network_receive_bytes": "sum by(%(instanceLabel)s) (rate(node_network_receive_bytes_total{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]))",
+            "network_transmit_bytes": "sum by(%(instanceLabel)s) (rate(node_network_transmit_bytes_total{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]))"
+         },
+         "kubernetes": {
+            "cpu_limit": "min(container_spec_cpu_quota{%(namespace)s,container=~\"%(containerName)s\"} / container_spec_cpu_period{%(namespace)s,container=~\"%(containerName)s\"})",
+            "cpu_request": "min(kube_pod_container_resource_requests{%(namespace)s,container=~\"%(containerName)s\",resource=\"cpu\"})",
+            "cpu_usage": "sum by(%(instanceLabel)s) (rate(container_cpu_usage_seconds_total{%(namespace)s,container=~\"%(containerName)s\"}[$__rate_interval]))",
+            "disk_reads": "sum by(%(nodeLabel)s, %(instanceLabel)s, device) (\n  rate(\n    node_disk_read_bytes_total[$__rate_interval]\n  )\n) + %(filterNodeDiskContainer)s\n",
+            "disk_utilization": "max by(persistentvolumeclaim) (\n  kubelet_volume_stats_used_bytes{%(namespaceMatcher)s} /\n  kubelet_volume_stats_capacity_bytes{%(namespaceMatcher)s}\n)\nand\ncount by(persistentvolumeclaim) (\n  kube_persistentvolumeclaim_labels{\n    %(namespaceMatcher)s,\n    %(containerMatcher)s\n  }\n)\n",
+            "disk_writes": "sum by(%(nodeLabel)s, %(instanceLabel)s, device) (\n  rate(\n    node_disk_written_bytes_total[$__rate_interval]\n  )\n)\n+\n%(filterNodeDiskContainer)s\n",
+            "memory_go_heap_usage": "sum by(%(instanceLabel)s) (go_memstats_heap_inuse_bytes{%(namespace)s,container=~\"%(containerName)s\"})",
+            "memory_rss_limit": "min(container_spec_memory_limit_bytes{%(namespace)s,container=~\"%(containerName)s\"} > 0)",
+            "memory_rss_request": "min(kube_pod_container_resource_requests{%(namespace)s,container=~\"%(containerName)s\",resource=\"memory\"})",
+            "memory_rss_usage": "max by(%(instanceLabel)s) (container_memory_rss{%(namespace)s,container=~\"%(containerName)s\"})",
+            "memory_working_limit": "min(container_spec_memory_limit_bytes{%(namespace)s,container=~\"%(containerName)s\"} > 0)",
+            "memory_working_request": "min(kube_pod_container_resource_requests{%(namespace)s,container=~\"%(containerName)s\",resource=\"memory\"})",
+            "memory_working_usage": "max by(%(instanceLabel)s) (container_memory_working_set_bytes{%(namespace)s,container=~\"%(containerName)s\"})",
+            "network_receive_bytes": "sum by(%(instanceLabel)s) (rate(container_network_receive_bytes_total{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]))",
+            "network_transmit_bytes": "sum by(%(instanceLabel)s) (rate(container_network_transmit_bytes_total{%(namespaceMatcher)s,%(instanceLabel)s=~\"%(instanceName)s\"}[$__rate_interval]))"
+         }
+      },
+      "runbookURLPattern": "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-%s",
+      "showMultiCluster": true,
+      "show_dashboard_descriptions": {
+         "reads": true,
+         "tenants": true,
+         "top_tenants": true,
+         "writes": true
+      },
+      "show_rejected_requests_on_writes_dashboard": false,
+      "singleBinary": false,
+      "systemSaturationPerCoreThreshold": 2,
+      "tags": [
+         "mimir"
+      ],
+      "tenant_selectors": [
+         "cluster",
+         "namespace",
+         "tenant"
+      ],
+      "volumeFullPredictionSampleTime": "6h",
+      "windowsExporterSelector": "job=\"kubernetes-windows-exporter\""
+   },
+   "annotations": {
+      "list": [
+         {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+         }
+      ]
+   },
+   "description": "",
+   "editable": true,
+   "gnetId": null,
+   "graphTooltip": 1,
+   "id": 59,
+   "iteration": 1616445892702,
+   "links": [ ],
+   "panels": [
+      {
+         "datasource": "$datasource",
+         "description": "The number of certificates in the ready state.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "mappings": [ ],
+               "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                     {
+                        "color": "green",
+                        "value": null
+                     },
+                     {
+                        "color": "red",
+                        "value": 1
+                     }
+                  ]
+               }
+            },
+            "overrides": [
+               {
+                  "matcher": {
+                     "id": "byName",
+                     "options": "True"
+                  },
+                  "properties": [
+                     {
+                        "id": "thresholds",
+                        "value": {
+                           "mode": "absolute",
+                           "steps": [
+                              {
+                                 "color": "green",
+                                 "value": null
+                              }
+                           ]
+                        }
+                     }
+                  ]
+               }
+            ]
+         },
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+         },
+         "id": 2,
+         "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+               "calcs": [
+                  "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+            },
+            "text": { },
+            "textMode": "auto"
+         },
+         "pluginVersion": "7.4.5",
+         "targets": [
+            {
+               "expr": "sum by (condition) (certmanager_certificate_ready_status{cluster=\"$cluster\" })",
+               "interval": "",
+               "legendFormat": "{{ condition }}",
+               "refId": "A"
+            }
+         ],
+         "timeFrom": null,
+         "timeShift": null,
+         "title": "Certificates Ready",
+         "type": "stat"
+      },
+      {
+         "datasource": "$datasource",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "decimals": 1,
+               "mappings": [ ],
+               "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                     {
+                        "color": "red",
+                        "value": null
+                     },
+                     {
+                        "color": "#EAB839",
+                        "value": 604800
+                     },
+                     {
+                        "color": "green",
+                        "value": 1209600
+                     }
+                  ]
+               },
+               "unit": "dtdurations"
+            },
+            "overrides": [ ]
+         },
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+         },
+         "id": 4,
+         "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+               "calcs": [
+                  "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+            },
+            "text": { },
+            "textMode": "auto"
+         },
+         "pluginVersion": "7.4.5",
+         "targets": [
+            {
+               "expr": "min(certmanager_certificate_expiration_timestamp_seconds{cluster=\"$cluster\" } > 0) - time()",
+               "hide": false,
+               "instant": true,
+               "interval": "",
+               "legendFormat": "",
+               "refId": "A"
+            },
+            {
+               "expr": "vector(1250000)",
+               "hide": true,
+               "instant": true,
+               "interval": "",
+               "legendFormat": "",
+               "refId": "B"
+            }
+         ],
+         "timeFrom": null,
+         "timeShift": null,
+         "title": "Soonest Cert Expiry",
+         "type": "stat"
+      },
+      {
+         "datasource": "$datasource",
+         "description": "Status of the certificates. Values are True, False or Unknown.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": {
+                  "align": null,
+                  "filterable": false
+               },
+               "mappings": [
+                  {
+                     "from": "",
+                     "id": 0,
+                     "operator": "",
+                     "text": "Yes",
+                     "to": "",
+                     "type": 1,
+                     "value": ""
+                  }
+               ],
+               "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                     {
+                        "color": "green",
+                        "value": null
+                     },
+                     {
+                        "color": "red",
+                        "value": 80
+                     }
+                  ]
+               },
+               "unit": "none"
+            },
+            "overrides": [
+               {
+                  "matcher": {
+                     "id": "byName",
+                     "options": "Ready Status"
+                  },
+                  "properties": [
+                     {
+                        "id": "custom.width",
+                        "value": 100
+                     }
+                  ]
+               },
+               {
+                  "matcher": {
+                     "id": "byName",
+                     "options": "Valid Until"
+                  },
+                  "properties": [
+                     {
+                        "id": "unit",
+                        "value": "dateTimeAsIso"
+                     }
+                  ]
+               },
+               {
+                  "matcher": {
+                     "id": "byName",
+                     "options": "Valid Until"
+                  },
+                  "properties": [
+                     {
+                        "id": "unit",
+                        "value": "dateTimeAsIso"
+                     }
+                  ]
+               }
+            ]
+         },
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
+         },
+         "id": 9,
+         "options": {
+            "showHeader": true,
+            "sortBy": [
+               {
+                  "desc": false,
+                  "displayName": "Valid Until"
+               }
+            ]
+         },
+         "pluginVersion": "7.4.5",
+         "targets": [
+            {
+               "expr": "label_join(avg by (name, namespace, condition, exported_namespace) (certmanager_certificate_ready_status{cluster=\"$cluster\" } == 1), \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
+               "format": "table",
+               "instant": true,
+               "interval": "",
+               "legendFormat": "",
+               "refId": "A"
+            },
+            {
+               "expr": "label_join(avg by (name, namespace, exported_namespace) (certmanager_certificate_expiration_timestamp_seconds{cluster=\"$cluster\" }) * 1000, \"namespaced_name\", \"-\", \"namespace\", \"exported_namespace\", \"name\")",
+               "format": "table",
+               "instant": true,
+               "interval": "",
+               "legendFormat": "",
+               "refId": "B"
+            }
+         ],
+         "timeFrom": null,
+         "timeShift": null,
+         "title": "Certificates",
+         "transformations": [
+            {
+               "id": "seriesToColumns",
+               "options": {
+                  "byField": "namespaced_name"
+               }
+            },
+            {
+               "id": "organize",
+               "options": {
+                  "excludeByName": {
+                     "Time": true,
+                     "Time 1": true,
+                     "Time 2": true,
+                     "Value #A": true,
+                     "exported_namespace": false,
+                     "exported_namespace 1": false,
+                     "exported_namespace 2": true,
+                     "name 1": true,
+                     "namespace 2": true,
+                     "namespaced_name": true
+                  },
+                  "indexByName": {
+                     "Time 1": 8,
+                     "Time 2": 10,
+                     "Value #A": 6,
+                     "Value #B": 5,
+                     "condition": 4,
+                     "exported_namespace 1": 1,
+                     "exported_namespace 2": 11,
+                     "name 1": 9,
+                     "name 2": 3,
+                     "namespace": 0,
+                     "namespace 1": 2,
+                     "namespaced_name": 7
+                  },
+                  "renameByName": {
+                     "Time 1": "",
+                     "Value #B": "Valid Until",
+                     "condition": "Ready Status",
+                     "exported_namespace": "Certificate Namespace",
+                     "exported_namespace 1": "Certificate Namespace",
+                     "exported_namespace 2": "",
+                     "name": "Certificate",
+                     "name 2": "Certificate",
+                     "namespace": "Namespace",
+                     "namespace 1": "Namespace",
+                     "namespaced_name": ""
+                  }
+               }
+            }
+         ],
+         "type": "table"
+      },
+      {
+         "aliasColors": { },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "The rate of controller sync requests.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 1,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 8
+         },
+         "hiddenSeries": false,
+         "id": 7,
+         "interval": "20s",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "maxDataPoints": 250,
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [ ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "sum by (controller) (\n  rate(certmanager_controller_sync_call_count{cluster=\"$cluster\" }[$__rate_interval ])\n)",
+               "interval": "",
+               "legendFormat": "{{ controller }}",
+               "refId": "A"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "Controller Sync Requests/sec",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "reqps",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": { },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "Rate of requests to ACME provider.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 1,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 16
+         },
+         "hiddenSeries": false,
+         "id": 6,
+         "interval": "20s",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "maxDataPoints": 250,
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [ ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "sum by (method, path, status) (\n  rate(certmanager_http_acme_client_request_count{cluster=\"$cluster\" }[$__rate_interval ])\n)",
+               "interval": "",
+               "legendFormat": "{{ method }} {{ path }} {{ status }}",
+               "refId": "A"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "ACME HTTP Requests/sec",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "reqps",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": { },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "Average duration of requests to ACME provider. ",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 1,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 16
+         },
+         "hiddenSeries": false,
+         "id": 10,
+         "interval": "30s",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "maxDataPoints": 250,
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [ ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "sum by (method, path, status) (rate(certmanager_http_acme_client_request_duration_seconds_sum{cluster=\"$cluster\" }[$__rate_interval ]))\n/\nsum by (method, path, status) (rate(certmanager_http_acme_client_request_duration_seconds_count{cluster=\"$cluster\" }[$__rate_interval ]))",
+               "interval": "",
+               "legendFormat": "{{ method }} {{ path }} {{ status }}",
+               "refId": "A"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "ACME HTTP Request avg duration",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "s",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": {
+            "max": "dark-yellow"
+         },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "CPU Usage and limits, as percent of a vCPU core. ",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 0,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 24
+         },
+         "hiddenSeries": false,
+         "id": 12,
+         "interval": "1m",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "links": [ ],
+         "maxDataPoints": 250,
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [
+            {
+               "alias": "CPU",
+               "fill": 1,
+               "fillGradient": 5
+            },
+            {
+               "alias": "/Request.*/",
+               "color": "#FF9830",
+               "dashes": true
+            },
+            {
+               "alias": "/Limit.*/",
+               "color": "#F2495C",
+               "dashes": true
+            }
+         ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "avg by (pod) (rate(container_cpu_usage_seconds_total{container=\"cert-manager\", cluster=\"$cluster\" }[$__rate_interval ]))",
+               "format": "time_series",
+               "hide": false,
+               "interval": "",
+               "intervalFactor": 2,
+               "legendFormat": "CPU {{ pod }}",
+               "refId": "A"
+            },
+            {
+               "expr": "avg by (pod) (kube_pod_container_resource_limits_cpu_cores{container=\"cert-manager\", cluster=\"$cluster\" })",
+               "format": "time_series",
+               "hide": true,
+               "interval": "",
+               "intervalFactor": 1,
+               "legendFormat": "Limit {{ pod }}",
+               "refId": "B"
+            },
+            {
+               "expr": "avg by (pod) (kube_pod_container_resource_requests_cpu_cores{container=\"cert-manager\", cluster=\"$cluster\" })",
+               "format": "time_series",
+               "hide": true,
+               "interval": "",
+               "intervalFactor": 1,
+               "legendFormat": "Request {{ pod }}",
+               "refId": "C"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "CPU",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "percentunit",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": {
+            "max": "dark-yellow"
+         },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "Percent of the time that the CPU is being throttled. Higher is badderer. ",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 0,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 24
+         },
+         "hiddenSeries": false,
+         "id": 14,
+         "interval": "1m",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "links": [ ],
+         "maxDataPoints": 250,
+         "nullPointMode": "connected",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [
+            {
+               "alias": "/external-dns.*/",
+               "fill": 1,
+               "fillGradient": 5
+            }
+         ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "avg by (pod) (\n  rate(container_cpu_cfs_throttled_periods_total{container=\"cert-manager\", cluster=\"$cluster\" }[$__rate_interval ])\n  /\n  rate(container_cpu_cfs_periods_total{container=\"cert-manager\", cluster=\"$cluster\" }[$__rate_interval ])\n)",
+               "format": "time_series",
+               "hide": false,
+               "interval": "",
+               "intervalFactor": 2,
+               "legendFormat": "{{ pod }}",
+               "refId": "A"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "CPU Throttling",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "percentunit",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": {
+            "max": "dark-yellow"
+         },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "Memory utilisation and limits.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 0,
+         "fillGradient": 0,
+         "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 12,
+            "y": 24
+         },
+         "hiddenSeries": false,
+         "id": 16,
+         "interval": "1m",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "links": [ ],
+         "maxDataPoints": 250,
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [
+            {
+               "alias": "Memory",
+               "fill": 1,
+               "fillGradient": 5
+            },
+            {
+               "alias": "Request",
+               "color": "#FF9830",
+               "dashes": true
+            },
+            {
+               "alias": "Limit",
+               "color": "#F2495C",
+               "dashes": true
+            }
+         ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "avg by (pod) (container_memory_usage_bytes{container=\"cert-manager\", cluster=\"$cluster\" })",
+               "format": "time_series",
+               "hide": false,
+               "interval": "",
+               "intervalFactor": 1,
+               "legendFormat": "Memory {{ pod }}",
+               "refId": "A"
+            },
+            {
+               "expr": "avg by (pod) (kube_pod_container_resource_limits_memory_bytes{container=\"cert-manager\", cluster=\"$cluster\" })",
+               "format": "time_series",
+               "interval": "",
+               "intervalFactor": 1,
+               "legendFormat": "Limit {{ pod }}",
+               "refId": "B"
+            },
+            {
+               "expr": "avg by (pod) (kube_pod_container_resource_requests_memory_bytes{container=\"cert-manager\", cluster=\"$cluster\" })",
+               "format": "time_series",
+               "interval": "",
+               "intervalFactor": 1,
+               "legendFormat": "Request {{ pod }}",
+               "refId": "C"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "Memory",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "bytes",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": "0",
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      },
+      {
+         "aliasColors": {
+            "max": "dark-yellow"
+         },
+         "bars": false,
+         "dashLength": 10,
+         "dashes": false,
+         "datasource": "$datasource",
+         "description": "Network ingress/egress.",
+         "fieldConfig": {
+            "defaults": {
+               "custom": { },
+               "links": [ ]
+            },
+            "overrides": [ ]
+         },
+         "fill": 1,
+         "fillGradient": 5,
+         "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 18,
+            "y": 24
+         },
+         "hiddenSeries": false,
+         "id": 18,
+         "interval": "1m",
+         "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+         },
+         "lines": true,
+         "linewidth": 1,
+         "links": [ ],
+         "nullPointMode": "null",
+         "options": {
+            "alertThreshold": true
+         },
+         "percentage": false,
+         "pluginVersion": "7.4.5",
+         "pointradius": 2,
+         "points": false,
+         "renderer": "flot",
+         "seriesOverrides": [
+            {
+               "alias": "transmit",
+               "transform": "negative-Y"
+            }
+         ],
+         "spaceLength": 10,
+         "stack": false,
+         "steppedLine": false,
+         "targets": [
+            {
+               "expr": "avg(\n  sum without (interface) (\n    rate(container_network_receive_bytes_total{namespace=\"cert-manager\", cluster=\"$cluster\" }[$__rate_interval ])\n  )\n)",
+               "format": "time_series",
+               "hide": false,
+               "interval": "",
+               "intervalFactor": 2,
+               "legendFormat": "receive",
+               "refId": "A"
+            },
+            {
+               "expr": "avg(\n  sum without (interface) (\n    rate(container_network_transmit_bytes_total{namespace=\"cert-manager\", cluster=\"$cluster\" }[$__rate_interval ])\n  )\n)",
+               "format": "time_series",
+               "hide": false,
+               "interval": "",
+               "intervalFactor": 2,
+               "legendFormat": "transmit",
+               "refId": "B"
+            }
+         ],
+         "thresholds": [ ],
+         "timeFrom": null,
+         "timeRegions": [ ],
+         "timeShift": null,
+         "title": "Network",
+         "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+         },
+         "type": "graph",
+         "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [ ]
+         },
+         "yaxes": [
+            {
+               "format": "Bps",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            },
+            {
+               "format": "short",
+               "label": null,
+               "logBase": 1,
+               "max": null,
+               "min": null,
+               "show": true
+            }
+         ],
+         "yaxis": {
+            "align": false,
+            "alignLevel": null
+         }
+      }
+   ],
+   "refresh": "1m",
+   "schemaVersion": 27,
+   "style": "dark",
+   "tags": [
+      "cert-manager",
+      "infra"
+   ],
+   "templating": {
+      "list": [
+         {
+            "current": {
+               "selected": false,
+               "text": "prometheus",
+               "value": "prometheus"
+            },
+            "description": null,
+            "error": null,
+            "hide": 0,
+            "includeAll": false,
+            "label": "Data Source",
+            "multi": false,
+            "name": "datasource",
+            "options": [ ],
+            "query": "prometheus",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
+         },
+         {
+            "current": {
+               "selected": false,
+               "text": "",
+               "value": ""
+            },
+            "datasource": {
+               "type": "prometheus",
+               "uid": "$datasource"
+            },
+            "definition": "",
+            "hide": 0,
+            "includeAll": false,
+            "multi": false,
+            "name": "cluster",
+            "options": [ ],
+            "query": {
+               "query": "label_values(certmanager_certificate_ready_status{ }, cluster)",
+               "refId": "Prometheus-cluster-Variable-Query"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+         }
+      ]
+   },
+   "time": {
+      "from": "now-24h",
+      "to": "now"
+   },
+   "timepicker": {
+      "refresh_intervals": [
+         "10s",
+         "30s",
+         "1m",
+         "5m",
+         "15m",
+         "30m",
+         "1h",
+         "2h",
+         "1d"
+      ]
+   },
+   "timezone": "",
+   "title": "Cert Manager / Overview",
+   "uid": "TvuRo2iMk",
+   "version": 1
+}

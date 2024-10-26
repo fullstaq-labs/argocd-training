@@ -1,0 +1,83 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Split every x dashboards into a separate configMap to avoid hitting the configMap limit
+configMapGenerator:
+  - name: grafana-dashboards-0
+    files:
+      - apiserver.json
+      - cluster-total.json
+      - controller-manager.json
+      - k8s-resources-cluster.json
+      - k8s-resources-multicluster.json
+      - k8s-resources-namespace.json
+      - k8s-resources-node.json
+      - k8s-resources-pod.json
+      - k8s-resources-workload.json
+      - k8s-resources-workloads-namespace.json
+      - kubelet.json
+  - name: grafana-dashboards-1
+    files:
+      - kubernetes-nodes-overview.json
+      - kustomization.yaml
+      - namespace-by-pod.json
+      - namespace-by-workload.json
+      - node-cluster-rsrc-use.json
+      - node-multicluster-rsrc-use.json
+      - node-rsrc-use.json
+      - nodes-darwin.json
+      - nodes.json
+      - overview.json
+      - persistentvolumesusage.json
+      - pod-total.json
+      - proxy.json
+      - scheduler.json
+      - workload-total.json
+  - name: grafana-loki-dashboards
+    files:
+      - loki-chunks.json
+      - loki-deletion.json
+      - loki-logs.json
+      - loki-mixin-recording-rules.json
+      - loki-operational.json
+      - loki-reads.json
+      - loki-reads-resources.json
+      - loki-retention.json
+      - loki-writes.json
+      - loki-writes-resources.json
+  - name: grafana-mimir-dashboards-0
+    files:
+      - mimir-alertmanager-resources.json
+      - mimir-alertmanager.json
+      - mimir-compactor-resources.json
+      - mimir-compactor.json
+      - mimir-config.json
+      - mimir-object-store.json
+      - mimir-overrides.json
+  - name: grafana-mimir-dashboards-1
+    files:
+      - mimir-overview-networking.json
+      - mimir-overview-resources.json
+      - mimir-overview.json
+      - mimir-queries.json
+      - mimir-reads-networking.json
+      - mimir-reads-resources.json
+      - mimir-reads.json
+      - mimir-remote-ruler-reads-resources.json
+  - name: grafana-mimir-dashboards-2
+    files:
+      - mimir-remote-ruler-reads.json
+      - mimir-rollout-progress.json
+      - mimir-ruler.json
+      - mimir-scaling.json
+      - mimir-slow-queries.json
+      - mimir-tenants.json
+      - mimir-top-tenants.json
+      - mimir-writes-networking.json
+      - mimir-writes-resources.json
+      - mimir-writes.json
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    grafana_dashboard: "1"

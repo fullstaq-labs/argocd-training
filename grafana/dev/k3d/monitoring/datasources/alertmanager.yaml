@@ -1,0 +1,18 @@
+apiVersion: 1
+datasources:
+  - name: alertmanager
+    orgId: 1
+    isDefault: false
+    access: proxy
+    editable: false
+    type: alertmanager
+    # Set type to Mimir
+    jsonData:
+      implementation: mimir
+      handleGrafanaManagedAlerts: true
+      # Add X-Scope-OrgID
+      httpHeaderName1: "X-Scope-OrgID"
+    secureJsonData:
+      httpHeaderValue1: "0"
+    url: http://mimir-alertmanager-headless.monitoring.svc.cluster.local:8080
+    version: 1

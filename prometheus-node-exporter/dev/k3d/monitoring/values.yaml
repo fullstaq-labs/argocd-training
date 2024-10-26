@@ -1,0 +1,12 @@
+resources:
+  limits:
+    memory: 50Mi
+  requests:
+    cpu: 100m
+    memory: 30Mi
+
+prometheus:
+  monitor:
+    enabled: true
+    selectorOverride:
+      app.kubernetes.io/instance: prometheus-node-exporter

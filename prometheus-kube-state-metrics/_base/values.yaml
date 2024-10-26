@@ -1,0 +1,17 @@
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 64Mi
+
+prometheusScrape: false
+prometheus:
+  monitor:
+    enabled: true
+    honorLabels: true
+    selectorOverride:
+      app.kubernetes.io/instance: prometheus-kube-state-metrics
+    additionalLabels:
+      scraper: grafana-alloy
