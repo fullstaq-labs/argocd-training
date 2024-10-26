@@ -1,0 +1,52 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mimir
+
+resources:
+  - namespace.yaml
+
+helmCharts:
+  - repo: https://grafana.github.io/helm-charts
+    name: mimir-distributed
+    releaseName: mimir-distributed
+    namespace: mimir
+    version: 5.4.1
+    valuesFile: values.yaml
+
+patches:
+  - target:
+      kind: StatefulSet
+      name: mimir-distributed-(alertmanager|compactor|ingester-zone-(a|b|c)|store-gateway-zone-(a|b|c))
+    path: ./patches/add-missing-defaults-to-volume-templates.yaml
+  - target:
+      kind: ServiceMonitor
+      name: mimir-distributed-(alertmanager|chunks-cache|compactor|distributor|(index|metadata|results)-cache|ingester|overrides-exporter|querier|query-(frontend|scheduler)|ruler|store-gateway)
+    path: ./patches/add-missing-defaults-to-service-monitors.yaml
+# - op: test
+#   path: /spec/endpoints/0/port
+#   value: http-metrics
+
+# - op: test
+#   path: /spec/endpoints/0/relabelings/0/targetLabel
+#   value: job
+# - op: add
+#   path: /spec/endpoints/0/relabelings/0/action
+#   value: replace
+
+# - op: test
+#   path: /spec/endpoints/0/relabelings/1/targetLabel
+#   value: cluster
+# - op: add
+#   path: /spec/endpoints/0/relabelings/1/action
+#   value: replace
+
+# - op: test
+#   path: /spec/volumeClaimTemplates/0/metadata/name
+#   value: storage
+# - op: add
+#   path: /spec/volumeClaimTemplates/0/apiVersion
+#   value: v1
+# - op: add
+#   path: /spec/volumeClaimTemplates/0/kind
+#   value: PersistentVolumeClaim

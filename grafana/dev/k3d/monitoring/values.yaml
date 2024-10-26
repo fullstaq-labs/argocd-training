@@ -23,7 +23,7 @@ testFramework:
   enabled: false
 
 ingress:
-  enabled: true
+  enabled: false
   path: /
   pathType: Prefix
   hosts:
