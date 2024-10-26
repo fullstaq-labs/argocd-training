@@ -3,7 +3,7 @@ kind: AppProject
 metadata:
   name: philips
 spec:
-  description: ArgoCD project for apps managed by TRUE
+  description: ArgoCD project for apps
   destinations:
     - namespace: '!default'
       server: '*'

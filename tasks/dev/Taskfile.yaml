@@ -37,9 +37,9 @@ tasks:
 
       - task: utils:wait-for
         vars:
-          GUM_SPIN_TITLE: "Waiting for abovo ApplicationSet to be up to date..."
+          GUM_SPIN_TITLE: "Waiting for ApplicationSet to be up to date..."
           CONDITION: ResourcesUpToDate
-          RESOURCE: applicationsets/abovo
+          RESOURCE: applicationsets/philips
           NAMESPACE: argocd
 
       # deploy a minimal number of services
@@ -91,7 +91,7 @@ tasks:
       REPO_URL: https://github.com/fullstaq-labs/argocd-training.git
     cmds:
       - cmd: |
-          kubectl patch applicationset/abovo \
+          kubectl patch applicationset/philips \
             --namespace argocd \
             --type json \
             --patch '[
