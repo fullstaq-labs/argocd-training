@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: philips
+spec:
+  description: ArgoCD project for apps managed by TRUE
+  destinations:
+    - namespace: '!default'
+      server: '*'
+  sourceRepos:
+    - https://github.com/fullstaq-labs/argocd-training*
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: false
