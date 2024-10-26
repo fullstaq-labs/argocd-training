@@ -4,7 +4,7 @@ metadata:
   name: argocd
   namespace: argocd
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned-ca-issuer
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   ingressClassName: nginx
   rules:
