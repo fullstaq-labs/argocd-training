@@ -167,6 +167,9 @@ Repository that holds the contents for an ArgoCD training.
     Then all our changes are lost :(\
     This is where the power of GitOps comes in (more on GitOps can be found [here](https://argo-cd.readthedocs.io/en/stable/#how-it-works)).\
 
+
+    Additional text
+
     ## To Do
     * Create GitHub repo with manifests which can be forked
     * Add Repo to Argocd
