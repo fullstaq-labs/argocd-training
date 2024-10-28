@@ -24,17 +24,14 @@
       "version": "1.31"
     }
   },
-  "postStartCommand": [
-    "/usr/local/py-utils/bin/pre-commit",
-    "install",
-    "--install-hooks"
-  ],
+  "postStartCommand": "/usr/local/py-utils/bin/pre-commit install --install-hooks && task down && task up",
+
   "runArgs": [
     "--add-host=argocd.localhost:127.0.0.1"
   ],
   "appPort": [
-    80,
-    443,
-    6443
+  80,
+  443,
+  6443
   ]
 }
