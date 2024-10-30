@@ -65,6 +65,8 @@ tasks:
       - echo "alias kgs='kubectl get svc'" >> /home/vscode/.bashrc
       - echo "alias kgn='kubectl get nodes'" >> /home/vscode/.bashrc
       - echo "alias keti='kubectl exec -ti'" >> /home/vscode/.bashrc
+      - echo 'source <(kubectl completion bash)' >> /home/vscode/.bashrc
+      - echo 'complete -o default -F __start_kubectl k' >> /home/vscode/.bashrc
 
   create-k3d-cluster:
     desc: "Wrapper task that will only execute if the CLUSTER_TYPE matches"
