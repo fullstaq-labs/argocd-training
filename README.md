@@ -8,7 +8,7 @@ Repository that holds the contents for an ArgoCD training.
      ```bash
      # https
      git clone https://github.com/fullstaq-labs/argocd-training.git
-     
+
      # ssh
      git clone git@github.com:fullstaq-labs/argocd-training.git
      ```
@@ -21,7 +21,9 @@ Repository that holds the contents for an ArgoCD training.
     > If you've used the GitHub Codespaces, be sure to close the codespace after the training.\
     > Otherwise you could be billed by GitHub for the use of Codespaces
 
-2.  When the devcontainer starts a cluster is created and ArgoCD is already installed.\
+2.  When the devcontainer you need to execute the following command:
+
+    This wil create a cluster and install ArgoCD.\
     Normally when you install ArgoCD there are two options:\
         * Based on manifests (manifests can be found [here](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml))\
         * Based on a helm chart (helm charts can be found [here](https://artifacthub.io/packages/helm/argo/argocd-apps))\
@@ -49,14 +51,12 @@ Repository that holds the contents for an ArgoCD training.
 
 5.  The UI is one way to interact with ArgoCD.\
     Another way is the ArgoCD CLI tool, which could be handy when you need to do some debugging.\
-    To use the CLI tool you should login with the same credentials (username **admin** and password **admin**).
-    Follow the commands below to start:
+    For this workshop we've enabled using the ArgoCD without logging in.\
+    Normally you should use the following command to login:
     ```bash
     # ArgoCD login command
-    argocd login localhost:31443
+    argocd login argocd.localhost
     ```
-    > [!NOTE]
-    > It will show a certificate erro (unknown authority), you can proceed insecurely.
 
     To see all posibilities of the CLI tool just type the following command:
     ```bash
@@ -152,7 +152,7 @@ Repository that holds the contents for an ArgoCD training.
     ```console
     # The result:
     NAME              CLUSTER                         NAMESPACE  PROJECT  STATUS     HEALTH   SYNCPOLICY  CONDITIONS  REPO                                                 PATH       TARGET
-    argocd/guestbook  https://kubernetes.default.svc  default    default  OutOfSync  Missing  Manual      <none>      https://github.com/argoproj/argocd-example-apps.git  guestbook  
+    argocd/guestbook  https://kubernetes.default.svc  default    default  OutOfSync  Missing  Manual      <none>      https://github.com/argoproj/argocd-example-apps.git  guestbook
     ```
 
     Synchronizing the application can also be done in two ways.\
@@ -175,8 +175,7 @@ Repository that holds the contents for an ArgoCD training.
     * Manage ArgoCD with ArgoCD (GitOps way)
     * Create AppProject
     * Create another application in the other project (GitOps way)
-    
+
     ## Advanced exercises
     * Create multiple users;
     * Create OIDC integration;
-
