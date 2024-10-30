@@ -33,9 +33,18 @@ tasks:
 
   up:
     desc: "Deploy entire local development environment."
-    # TODO: write a concise summary
+    vars:
+      PERSONAL_ACCESS_TOKEN_USER:
+        sh: gum input --header "What is your Github username?"
+      PERSONAL_ACCESS_TOKEN:
+        sh: gum input --header "What is your Github personal access token?" --password
     cmds:
       - task: dev:up
+        vars:
+          PERSONAL_ACCESS_TOKEN_USER: "{{.PERSONAL_ACCESS_TOKEN_USER}}"
+          PERSONAL_ACCESS_TOKEN: "{{.PERSONAL_ACCESS_TOKEN}}"
+          ARGOCD_REPO_URL: https://github.com/fullstaq-labs/argocd-training
+          ARGOCD_BOOTSTRAP_DIR: argocd/dev/k3d/argocd
 
   destroy:
     desc: "Destroy entire local development environment."

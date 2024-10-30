@@ -24,6 +24,7 @@ tasks:
     cmds:
       - task: create-k3d-cluster
       - task: create-kind-cluster
+      - task: create-aliasses
 
       # switch to argocd as the default namespace, this helps with argocd cli's core mode.
       - cmd: gum log --level info $(kubectl config set-context --current --namespace argocd)
@@ -52,6 +53,19 @@ tasks:
       - task: sync-all-apps
 
       - cmd: gum log --level info "Local deployment complete."
+
+  create-aliasses:
+    desc: "Create kubectl aliasses"
+    silent: true
+    cmds:
+      - echo "" >> /home/vscode/.bashrc
+      - echo "alias k='kubectl'" >> /home/vscode/.bashrc
+      - echo "alias kns='kubens'" >> /home/vscode/.bashrc
+      - echo "alias kgp='kubectl get pods'" >> /home/vscode/.bashrc
+      - echo "alias kgs='kubectl get svc'" >> /home/vscode/.bashrc
+      - echo "alias kgn='kubectl get nodes'" >> /home/vscode/.bashrc
+      - echo "alias keti='kubectl exec -ti'" >> /home/vscode/.bashrc
+      - source /home/vscode/.bashrc
 
   create-k3d-cluster:
     desc: "Wrapper task that will only execute if the CLUSTER_TYPE matches"
