@@ -40,7 +40,7 @@ tasks:
         vars:
           GUM_SPIN_TITLE: "Waiting for ApplicationSet to be up to date..."
           CONDITION: ResourcesUpToDate
-          RESOURCE: applicationsets/philips
+          RESOURCE: applicationsets/customer
           NAMESPACE: argocd
 
       # deploy a minimal number of services
@@ -104,7 +104,7 @@ tasks:
       REPO_URL: https://github.com/fullstaq-labs/argocd-training.git
     cmds:
       - cmd: |
-          kubectl patch applicationset/philips \
+          kubectl patch applicationset/customer \
             --namespace argocd \
             --type json \
             --patch '[
@@ -116,7 +116,7 @@ tasks:
         vars:
           GUM_SPIN_TITLE: "Waiting for ApplicationSet to be up to date..."
           CONDITION: ResourcesUpToDate
-          RESOURCE: applicationsets/philips
+          RESOURCE: applicationsets/customer
           NAMESPACE: argocd
 
   sync-all-apps:
