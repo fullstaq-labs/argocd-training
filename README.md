@@ -2,19 +2,20 @@
 Repository that holds the contents for an ArgoCD training.
 
 # Steps for the training!
-1. Start the dev container, which can be done in 2 ways:
+1. First step is to open this repository, **[click here](https://github.com/fullstaq-labs/argocd-training.git)**
+    Start the dev container, which can be done in 2 ways:
 
    * Open GitHub, clone this repo with one of the following commands:
      ```bash
      # https
-     git clone https://github.com/fullstaq-labs/argocd-training.git
+     git clone https://github.com/<pathToYourForkedRepo>
 
      # ssh
-     git clone git@github.com:fullstaq-labs/argocd-training.git
+     git clone git@github.com:<pathToYourForkedRepo>
      ```
      Open the folder where you've cloned the repo locally in Visual Studio Code and follow the instructions from the image below.\
      ![instructions local vscode](./.docs/local-vscode.gif)
-   * Go to [this Repo](https://github.com/fullstaq-labs/argocd-training) in GitHub and open Codespaces (follow the instructions from the image below).\
+   * Go to repository you've forked in GitHub and open Codespaces (follow the instructions from the image below).\
      ![instructions remote vscode](./.docs/remote-vscode.gif)
 
     > [!IMPORTANT]
@@ -147,7 +148,7 @@ Repository that holds the contents for an ArgoCD training.
     1. Check the UI;
     2. Use the ArgoCD CLI.
     ```bash
-    argocd app list
+    argocd app list | grep argocd/guestbook
     ```
     ```console
     # The result:
@@ -165,14 +166,123 @@ Repository that holds the contents for an ArgoCD training.
 7.  That's one way to deploy an application, but this is off course not what we want.\
     Because what happens if the cluster breaks and there is no decent back-up of ETCD?!\
     Then all our changes are lost :(\
-    This is where the power of GitOps comes in (more on GitOps can be found [here](https://argo-cd.readthedocs.io/en/stable/#how-it-works)).\
+    Reason is because we've used the imperative instead of declarative way of working.
+
+    Let's start the declarative way of working.\
+    Therefore we will use Kubernetes manifests in a Git repository.\
+    To make the exercise a bit easier, we've provided [this manifest](./applications/example-app.yaml) which looks like this:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+    name: guestbook
+    labels:
+        application: guestbook
+    spec:
+    project: customer
+    source:
+        repoURL: <YourRepositoryHere>
+        targetRevision: <PathToYourBranch>
+        path: <PathToYourApp>
+    destination:
+        namespace: <DestinationNamespace>
+        name: in-cluster
+    syncPolicy:
+        automated:
+        prune: false
+        selfHeal: false
+    ```
+
+    First replace the values that are between *angle brackets*.\
+    Take a look at the previous question and you should be able to fill these values.\
+    > [!Note]
+    > Note that the value for the destination cluster has changed.\
+    > This refers to the alias which ArgoCD uses to communicate with a cluster.\
+    > On clusters where ArgoCD runs, this is always called in-cluster.
+
+    Once you've update the file, you can apply the change with the following command:
+    ```bash
+    kubectl apply -f applications/example-app.yaml
+    ```
+
+    If you look at the app in ArgoCD, nothing has changed, because you've created the same app.
+
+8.  Then there is the concept of app-of-apps, where one app manages one or more apps.\
+    One way to this can be found in the contents of [this application](./applications/example-app-of-apps.yaml).\
+    Instead of pointing this app to a single app you'll point it to a folder with one or more apps.\
+    Also for this case we've provided example code, which looks like:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+    name: app-of-apps
+    labels:
+        application: app-of-apps
+    spec:
+    project: customer
+    source:
+        repoURL: <YourForkedRepositoryHere>
+        targetRevision: <PathToYourForkedBranch>
+        path: app-of-apps
+    destination:
+        namespace: <DestinationNamespace>
+        name: in-cluster
+    syncPolicy:
+        automated:
+        prune: false
+        selfHeal: false
+    ```
+
+    Start replacing the values between the *angle brackets* but wait before you apply the changes.\
+    You also need to change the contents of the values in [folder app-of-apps](./app-of-apps/).
+    Also change the values between the *angle brackets*.\
+    Once you're done, commit your changes to Git, in that way the **app-of-apps** application is able to pull the content from your repository.\
+    > [!Important]
+    > If your repository isn't publicly available, you'll need to provide credentials to ArgoCD to access your repository.\
+    > This is explained in [this article](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/).\
+    > It can also be done the declarative way, which is explained in [this article](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories).
+
+    Once done, you can apply the application, which should trigger the deployment of 3 applications (the app-of-apps application and 2 guestbook applications).
+    ```bash
+    kubectl apply -f applications/app-of-apps.yaml
+    ```
+
+    To check if everything works, please use the ArgoCD CLI of ArgoCD UI.
+
+9.  Untill now we've only managed kubernetes manifest with ArgoCD applications.\
+    But what about Helm charts? Can these also be managed with ArgoCD?\
+    Of course, but the configuration needs to be slightly different.\
+    Below is an example of the code:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+    name: guestbook-app-of-apps-3
+    labels:
+        application: guestbook-app-of-apps-3
+    spec:
+    project: customer
+    source:
+        repoURL: https://github.com/argoproj/argocd-example-apps/tree/master/helm-guestbook
+        targetRevision: main
+        path: helm-guestbook
+        helm:
+            valueFiles:
+                - values.yaml
+    destination:
+        namespace: example-namespace-3
+        name: in-cluster
+    syncPolicy:
+        automated:
+        prune: true
+        selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+    ```
+    Create a file in the folder **app-of-apps** called **example-app3.yaml**.\
+    If you commit the change to git, the app-of-apps should automatically add the new app to your cluster.
 
     ## To Do
-    * Create GitHub repo with manifests which can be forked
-    * Add Repo to Argocd
-    * Create Application based on manifests (GitOps way)
-    * Create application based on helm charts (GitOps way)
-    * Manage ArgoCD with ArgoCD (GitOps way)
     * Create AppProject
     * Create another application in the other project (GitOps way)
 

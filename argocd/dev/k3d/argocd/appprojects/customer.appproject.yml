@@ -5,7 +5,7 @@ metadata:
 spec:
   description: ArgoCD project for apps
   destinations:
-    - namespace: '!default'
+    - namespace: '*'
       server: '*'
   sourceRepos:
     - https://github.com/fullstaq-labs/argocd-training*
