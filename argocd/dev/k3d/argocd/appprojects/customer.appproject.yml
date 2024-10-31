@@ -8,7 +8,7 @@ spec:
     - namespace: '*'
       server: '*'
   sourceRepos:
-    - https://github.com/fullstaq-labs/argocd-training*
+    - '*'
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
