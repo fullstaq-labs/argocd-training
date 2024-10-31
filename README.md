@@ -17,18 +17,17 @@ Repository that holds the contents for an ArgoCD training.
      Open the folder where you've cloned the repo locally in Visual Studio Code and follow the instructions from the image below.\
      ![instructions local vscode](./.docs/local-vscode.gif)
    * Go to repository you've forked in GitHub and open Codespaces (follow the instructions from the image below).\
-     ![instructions remote vscode](./.docs/remote-vscode.gif)
+        ![instructions remote vscode](./.docs/remote-vscode.gif)
+        > [!IMPORTANT]\
+        > If you've used the GitHub Codespaces, be sure to close the codespace after the training.\
+        > Otherwise you could be billed by GitHub for the use of Codespaces
 
-    > [!IMPORTANT]
-    > If you've used the GitHub Codespaces, be sure to close the codespace after the training.\
-    > Otherwise you could be billed by GitHub for the use of Codespaces
-
-2.  When the devcontainer you need to execute the following command:
+2.  When the devcontainer is started, you need to execute the following command:
     ```bash
     task up
     ```
-    This wil create a cluster and install ArgoCD.\
-    Normally when you install ArgoCD there are two options:\
+    This wil create a Kubernetes cluster and install ArgoCD (and some additional tools).\
+    Normally when you install ArgoCD there are two options:
         * Based on manifests (manifests can be found [here](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml))\
         * Based on a helm chart (helm charts can be found [here](https://artifacthub.io/packages/helm/argo/argocd-apps))\
     In the devcontainer it's installed based on the helm chart.
@@ -44,10 +43,7 @@ Repository that holds the contents for an ArgoCD training.
     ```
 
 4.  If all pods are in the Running state we can proceed.\
-    Now let's check if you can reach the ArgoCD.\
-    This can be done from the Tab ports, which is shown in the picture below.\
-    In there press on the marked button, which will open a browser window.\
-    ![ports section vscode](./.docs/ports-vscode.png)
+    Now let's check if you can reach ArgoCD ui, which is available at the url https://argocd.localhost
 
     You can login with username **admin** and password **admin**.\
     Once there you should see the following content:
@@ -124,7 +120,7 @@ Repository that holds the contents for an ArgoCD training.
     ```
 
 6.  Now we've explored the ways to interact, let's start with deploying stuff.\
-    There are some core components in ArgoCD, which are very important:\
+    There are some core components in ArgoCD, which are very important:
     * Cluster - Defines the cluster and provides credentials to interact with the cluster (provided as a Kubernetes secret with annotations);
     * Repository - Defines the repository credentials for repositories where Kubernetes resources can be deployed from  (provided as a Kubernetes secret with annotations);
     * AppProjects - Defines a project in which you can deploy resources. Within an AppProject you can define certain boundries (provided as a CRD);
@@ -197,8 +193,8 @@ Repository that holds the contents for an ArgoCD training.
     ```
 
     First replace the values that are between *angle brackets*.\
-    Take a look at the previous question and you should be able to fill these values.\
-    > [!Note]
+    Take a look at the previous question and you should be able to fill these values.
+    > [!Note]\
     > Note that the value for the destination cluster has changed.\
     > This refers to the alias which ArgoCD uses to communicate with a cluster.\
     > On clusters where ArgoCD runs, this is always called in-cluster.
