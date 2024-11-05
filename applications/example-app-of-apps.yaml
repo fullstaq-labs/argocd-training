@@ -7,8 +7,8 @@ metadata:
 spec:
   project: customer
   source:
-    repoURL: <YourForkedRepositoryHere>
-    targetRevision: <PathToYourForkedBranch>
+    repoURL: https://github.com/fullstaq-labs/argocd-training.git
+    targetRevision: test-training
     path: app-of-apps
   destination:
     namespace: argocd
