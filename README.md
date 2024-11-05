@@ -1,28 +1,33 @@
 # argocd-training
 Repository that holds the contents for an ArgoCD training.
 
-# Steps for the training!
-1. Start the dev container, which can be done in 2 ways:
+## Steps for the training!
+1.  First step is to open this repository, **[click here](https://github.com/fullstaq-labs/argocd-training.git)**.\
+    Change in this repository all url's from https://github.com/fullstaq-labs/argocd-training.git to the URL from the repository you forked (search with **ctrl + shift + f** or **cmd + shift + f**).\
+    Start the dev container, which can be done in 2 ways:
 
    * Open GitHub, clone this repo with one of the following commands:
      ```bash
      # https
-     git clone https://github.com/fullstaq-labs/argocd-training.git
-     
+     git clone https://github.com/<pathToYourForkedRepo>
+
      # ssh
-     git clone git@github.com:fullstaq-labs/argocd-training.git
+     git clone git@github.com:<pathToYourForkedRepo>
      ```
      Open the folder where you've cloned the repo locally in Visual Studio Code and follow the instructions from the image below.\
      ![instructions local vscode](./.docs/local-vscode.gif)
-   * Go to [this Repo](https://github.com/fullstaq-labs/argocd-training) in GitHub and open Codespaces (follow the instructions from the image below).\
-     ![instructions remote vscode](./.docs/remote-vscode.gif)
+   * Go to repository you've forked in GitHub and open Codespaces (follow the instructions from the image below).\
+        ![instructions remote vscode](./.docs/remote-vscode.gif)
+        > [!IMPORTANT]\
+        > If you've used the GitHub Codespaces, be sure to close the codespace after the training.\
+        > Otherwise you could be billed by GitHub for the use of Codespaces
 
-    > [!IMPORTANT]
-    > If you've used the GitHub Codespaces, be sure to close the codespace after the training.\
-    > Otherwise you could be billed by GitHub for the use of Codespaces
-
-2.  When the devcontainer starts a cluster is created and ArgoCD is already installed.\
-    Normally when you install ArgoCD there are two options:\
+2.  When the devcontainer is started, you need to execute the following command:
+    ```bash
+    task up
+    ```
+    This wil create a Kubernetes cluster and install ArgoCD (and some additional tools).\
+    Normally when you install ArgoCD there are two options:
         * Based on manifests (manifests can be found [here](https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml))\
         * Based on a helm chart (helm charts can be found [here](https://artifacthub.io/packages/helm/argo/argocd-apps))\
     In the devcontainer it's installed based on the helm chart.
@@ -38,10 +43,7 @@ Repository that holds the contents for an ArgoCD training.
     ```
 
 4.  If all pods are in the Running state we can proceed.\
-    Now let's check if you can reach the ArgoCD.\
-    This can be done from the Tab ports, which is shown in the picture below.\
-    In there press on the marked button, which will open a browser window.\
-    ![ports section vscode](./.docs/ports-vscode.png)
+    Now let's check if you can reach ArgoCD ui, which is available at the url https://argocd.localhost
 
     You can login with username **admin** and password **admin**.\
     Once there you should see the following content:
@@ -49,14 +51,12 @@ Repository that holds the contents for an ArgoCD training.
 
 5.  The UI is one way to interact with ArgoCD.\
     Another way is the ArgoCD CLI tool, which could be handy when you need to do some debugging.\
-    To use the CLI tool you should login with the same credentials (username **admin** and password **admin**).
-    Follow the commands below to start:
+    For this workshop we've enabled using the ArgoCD without logging in.\
+    Normally you should use the following command to login:
     ```bash
     # ArgoCD login command
-    argocd login localhost:31443
+    argocd login argocd.localhost
     ```
-    > [!NOTE]
-    > It will show a certificate erro (unknown authority), you can proceed insecurely.
 
     To see all posibilities of the CLI tool just type the following command:
     ```bash
@@ -120,7 +120,7 @@ Repository that holds the contents for an ArgoCD training.
     ```
 
 6.  Now we've explored the ways to interact, let's start with deploying stuff.\
-    There are some core components in ArgoCD, which are very important:\
+    There are some core components in ArgoCD, which are very important:
     * Cluster - Defines the cluster and provides credentials to interact with the cluster (provided as a Kubernetes secret with annotations);
     * Repository - Defines the repository credentials for repositories where Kubernetes resources can be deployed from  (provided as a Kubernetes secret with annotations);
     * AppProjects - Defines a project in which you can deploy resources. Within an AppProject you can define certain boundries (provided as a CRD);
@@ -147,12 +147,12 @@ Repository that holds the contents for an ArgoCD training.
     1. Check the UI;
     2. Use the ArgoCD CLI.
     ```bash
-    argocd app list
+    argocd app list | grep argocd/guestbook
     ```
     ```console
     # The result:
     NAME              CLUSTER                         NAMESPACE  PROJECT  STATUS     HEALTH   SYNCPOLICY  CONDITIONS  REPO                                                 PATH       TARGET
-    argocd/guestbook  https://kubernetes.default.svc  default    default  OutOfSync  Missing  Manual      <none>      https://github.com/argoproj/argocd-example-apps.git  guestbook  
+    argocd/guestbook  https://kubernetes.default.svc  default    default  OutOfSync  Missing  Manual      <none>      https://github.com/argoproj/argocd-example-apps.git  guestbook
     ```
 
     Synchronizing the application can also be done in two ways.\
@@ -165,18 +165,321 @@ Repository that holds the contents for an ArgoCD training.
 7.  That's one way to deploy an application, but this is off course not what we want.\
     Because what happens if the cluster breaks and there is no decent back-up of ETCD?!\
     Then all our changes are lost :(\
-    This is where the power of GitOps comes in (more on GitOps can be found [here](https://argo-cd.readthedocs.io/en/stable/#how-it-works)).\
+    Reason is because we've used the imperative instead of declarative way of working.
 
-    ## To Do
-    * Create GitHub repo with manifests which can be forked
-    * Add Repo to Argocd
-    * Create Application based on manifests (GitOps way)
-    * Create application based on helm charts (GitOps way)
-    * Manage ArgoCD with ArgoCD (GitOps way)
-    * Create AppProject
-    * Create another application in the other project (GitOps way)
-    
-    ## Advanced exercises
-    * Create multiple users;
-    * Create OIDC integration;
+    Let's start the declarative way of working.\
+    Therefore we will use Kubernetes manifests in a Git repository.\
+    To make the exercise a bit easier, we've provided [this manifest](./applications/example-app.yaml) which looks like this:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: guestbook
+    labels:
+      application: guestbook
+    spec:
+      project: customer
+      source:
+        repoURL: <YourRepositoryHere>
+        targetRevision: <PathToYourBranch>
+        path: <PathToYourApp>
+      destination:
+        namespace: <DestinationNamespace>
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false
+    ```
 
+    First replace the values that are between *angle brackets*.\
+    Take a look at the previous question and you should be able to fill these values.
+    > [!Note]\
+    > Note that the value for the destination cluster has changed.\
+    > This refers to the alias which ArgoCD uses to communicate with a cluster.\
+    > On clusters where ArgoCD runs, this is always called in-cluster.
+
+    Once you've update the file, you can apply the change with the following command:
+    ```bash
+    kubectl apply -f applications/example-app.yaml
+    ```
+
+    If you look at the app in ArgoCD, nothing has changed, because you've created the same app.
+
+8.  Then there is the concept of app-of-apps, where one app manages one or more apps.\
+    One way to this can be found in the contents of [this application](./applications/example-app-of-apps.yaml).\
+    Instead of pointing this app to a single app you'll point it to a folder with one or more apps.\
+    Also for this case we've provided example code, which looks like:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: app-of-apps
+    labels:
+      application: app-of-apps
+    spec:
+      project: customer
+      source:
+        repoURL: <YourForkedRepositoryHere>
+        targetRevision: <PathToYourForkedBranch>
+        path: app-of-apps
+      destination:
+        namespace: <DestinationNamespace>
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false
+    ```
+
+    Start replacing the values between the *angle brackets* but wait before you apply the changes.\
+    You also need to change the contents of the values in [folder app-of-apps](./app-of-apps/).
+    Also change the values between the *angle brackets*.\
+    Once you're done, commit your changes to Git, in that way the **app-of-apps** application is able to pull the content from your repository.\
+    > [!Important]
+    > If your repository isn't publicly available, you'll need to provide credentials to ArgoCD to access your repository.\
+    > This is explained in [this article](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/).\
+    > It can also be done the declarative way, which is explained in [this article](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories).
+
+    Once done, you can apply the application, which should trigger the deployment of 3 applications (the app-of-apps application and 2 guestbook applications).
+    ```bash
+    kubectl apply -f applications/app-of-apps.yaml
+    ```
+
+    To check if everything works, please use the ArgoCD CLI of ArgoCD UI.
+
+9.  Untill now we've only managed kubernetes manifest with ArgoCD applications.\
+    But what about Helm charts? Can these also be managed with ArgoCD?\
+    Of course, but the configuration needs to be slightly different.\
+    Below is an example of the code:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: guestbook-app-of-apps-3
+    labels:
+      application: guestbook-app-of-apps-3
+    spec:
+      project: customer
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps/tree/master/helm-guestbook
+        targetRevision: main
+        path: helm-guestbook
+        helm:
+          valueFiles:
+            - values.yaml
+      destination:
+        namespace: example-namespace-3
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+    Create a file in the folder **app-of-apps** called **example-app3.yaml**.\
+    If you commit the change to git, the app-of-apps should automatically add the new app to your cluster.
+
+
+10. In the previous exercises we've used a predefined project, which is customer.\
+    Now we're going to create one of our own!\
+    But what can you do with a project?
+    * Set boundaries;
+    * Give access to certain groups or persons;
+    * Give access to certain repositories;
+    * Allow or deny access to certain resources;
+    * Allow to deploy to one or more clusters.
+
+    Let's create one of our own, below you'll find the necessary code.
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: AppProject
+    metadata:
+      name: developer
+    spec:
+      description: ArgoCD project for developer
+      destinations:
+        - namespace: 'developer*'
+          server: '*'
+      sourceRepos:
+        - '*'
+      namespaceResourceWhitelist:
+        - group: '*'
+          kind: '*'
+      clusterResourceWhitelist:
+        - group: '*'
+          kind: '*'
+      orphanedResources:
+        warn: false
+    ```
+
+    This project or AppProject is called developer and wil only allow the creation of resources in namespaces that start with **developer**.\
+    create a file **developer.appproject.yaml** in folder [appprojects](./argocd/dev/k3d/argocd/appprojects).\
+    Change the contents of file kustomization.yaml in the same folder.\
+    Add the file **developer.appproject.yaml** in the list of resources and commit your changes to Git.
+
+    If you go to the ArgoCD ui you should be able to see the project (go to **Settings -> Projects**).\
+    It's also possible to view it with the ArgoCD CLI with the following code
+    ```bash
+    argocd proj list
+    ```
+
+    Now let's test the effects of this project by creating multiple applications.\
+    First let's create the failing app based on the content below (notice the name of the namespace).\
+    Create a file in the folder app-of-apps which is called **appproject-failing-app.yaml**.
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: appproject-failing-app
+      labels:
+        application: appproject-failing-app
+    spec:
+      project: developer
+      source:
+        repoURL: <YourRepositoryHere>
+        targetRevision: <PathToYourBranch>
+        path: <PathToYourApp>
+      destination:
+        namespace: example-developer
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+
+    Now let's create the succesfull app based on the content below (notice the name of the namespace).\
+    Create a file in the folder app-of-apps which is called **appproject-succesfull-app.yaml**.
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: appproject-succesfull-app
+      labels:
+        application: appproject-succesfull-app
+    spec:
+      project: developer
+      source:
+        repoURL: <YourRepositoryHere>
+        targetRevision: <PathToYourBranch>
+        path: <PathToYourApp>
+      destination:
+        namespace: developer-example
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+
+    The result you should see is that the failing app won't deploy and the succesfull app will deploy.\
+    If you want to learn more about projects, have a look at [this documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects).
+
+11. Now it's time to apply a better setup for providing apps.\
+    This can be achieved by using ApplicationSets, which make the setup even more dynamic.\
+    The setup you are using in this training is based on ApplicationSets.\
+    Below the contents of the ApplicationSets is shown:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: ApplicationSet
+    metadata:
+      name: customer
+      namespace: argocd
+    spec:
+      goTemplate: true
+      goTemplateOptions: ["missingkey=error"]
+      generators:
+        - git:
+            repoURL: https://github.com/fullstaq-labs/argocd-training.git
+            revision: feat/improve-training
+            directories:
+              - path: "*/dev/k3d/*"
+            values:
+              service: "{{index .path.segments 0}}"
+              stage: "{{index .path.segments 1}}"
+              cluster: "{{index .path.segments 2}}"
+              namespace: "{{index .path.segments 3}}"
+      syncPolicy:
+        applicationsSync: create-update
+      template:
+        metadata:
+          name: "{{.values.service}}-{{.values.stage}}-{{.values.cluster}}-{{.values.namespace}}"
+          labels:
+            app.kubernetes.io/name: "{{.values.service}}"
+            app.kubernetes.io/instance: "{{.values.service}}-{{.values.stage}}-{{.values.cluster}}"
+          annotations:
+            # helps with syncing apps that rely on CRDs from other apps to be deployed first.
+            argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+        spec:
+          project: "customer"
+          destination:
+            name: '{{if eq .values.cluster "k3d"}}in-cluster{{else}}{{.values.cluster}}{{end}}'
+            namespace: "{{.values.namespace}}"
+          syncPolicy:
+            syncOptions:
+              - CreateNamespace=true
+              - ServerSideApply=true
+            retry:
+              limit: 30
+              backoff:
+                duration: 5s
+                factor: 1
+          source:
+            repoURL: https://github.com/fullstaq-labs/argocd-training.git
+            targetRevision: feat/improve-training
+            path: "{{.path.path}}"
+    ```
+
+    Important section of the Manifest is **generators**.\
+    This part is used to get values which makes the setup dynamic and here's why:
+    * repoUrl - Used for the repository to read from
+    * revision - The branch you wan't to use
+    * directories - The path in the repository you wan't to use
+    * values - The values you wan't to extract from the folder.\
+        In the case of the example it is used to retrieve:
+        * The name of the service;
+        * The stage;
+        * The cluster where you wan't to deploy to;
+        * The namespace you wan't to deploy to.
+
+    The values retrieved with the generator can then be used in the template section.\
+    Basically this makes it possible to add apps just by adding paths with kubernetes manifests of apps you want to use.
+
+    Let's try to deploy an application in this structure.\
+    Create a new folder with subfolders with the following structure **appset-app/dev/k3d/appset-app**.\
+    Add the file **customapp.yaml** to this folder.\
+    It should contain the following content:
+    ```yaml
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: appset-app
+      labels:
+        application: appset-app
+    spec:
+      project: customer
+      source:
+        repoURL: <YourRepositoryHere>
+        targetRevision: <PathToYourBranch>
+        path: <PathToYourApp>
+      destination:
+        namespace: appset-app
+        name: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+    ```
+
+## End of workshop
+Some important subjects we didn't cover during this training are:
+* OIDC integration
+* User management
