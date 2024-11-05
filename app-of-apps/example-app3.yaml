@@ -8,7 +8,7 @@ spec:
   project: customer
   source:
     repoURL: https://github.com/argoproj/argocd-example-apps/tree/master/helm-guestbook
-    targetRevision: main
+    targetRevision: master
     path: helm-guestbook
     helm:
       valueFiles:
