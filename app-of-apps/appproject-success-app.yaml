@@ -1,9 +1,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: appproject-failing-app
+  name: appproject-success-app
   labels:
-    application: appproject-failing-app
+    application: appproject-success-app
 spec:
   project: developer
   source:
