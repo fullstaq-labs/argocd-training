@@ -154,6 +154,9 @@ Repository that holds the contents for an ArgoCD training.
     NAME              CLUSTER                         NAMESPACE  PROJECT  STATUS     HEALTH   SYNCPOLICY  CONDITIONS  REPO                                                 PATH       TARGET
     argocd/guestbook  https://kubernetes.default.svc  default    default  OutOfSync  Missing  Manual      <none>      https://github.com/argoproj/argocd-example-apps.git  guestbook
     ```
+    > [!IMPORTANT]\
+    > We are using the **master** branch instead of the **main** branch (main doesn't exist in this repo).
+
 
     Synchronizing the application can also be done in two ways.\
     1. Go to the UI and press the synchronize button.
@@ -243,7 +246,7 @@ Repository that holds the contents for an ArgoCD training.
 
     Once done, you can apply the application, which should trigger the deployment of 3 applications (the app-of-apps application and 2 guestbook applications).
     ```bash
-    kubectl apply -f applications/app-of-apps.yaml
+    kubectl apply -f applications/example-app-of-apps.yaml
     ```
 
     To check if everything works, please use the ArgoCD CLI of ArgoCD UI.
@@ -317,7 +320,10 @@ Repository that holds the contents for an ArgoCD training.
     This project or AppProject is called developer and wil only allow the creation of resources in namespaces that start with **developer**.\
     create a file **developer.appproject.yaml** in folder [appprojects](./argocd/dev/k3d/argocd/appprojects).\
     Change the contents of file kustomization.yaml in the same folder.\
-    Add the file **developer.appproject.yaml** in the list of resources and commit your changes to Git.
+    Add the file **developer.appproject.yaml** in the list of resources and run the following command:
+    ```bash
+    kubectl apply -k argocd/dev/k3d/argocd/appsets
+    ```
 
     If you go to the ArgoCD ui you should be able to see the project (go to **Settings -> Projects**).\
     It's also possible to view it with the ArgoCD CLI with the following code
