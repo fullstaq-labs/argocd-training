@@ -36,5 +36,11 @@
     80,
     443,
     6443
-  ]
+  ],
+  "portsAttributes": {
+    "31443": {
+      "label": "Argocd",
+      "protocol": "https"
+    }
+}
 }
