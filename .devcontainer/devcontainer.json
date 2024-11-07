@@ -37,6 +37,7 @@
     443,
     6443
   ],
+	"forwardPorts": [31443,31444],
   "portsAttributes": {
     "31443": {
       "label": "Argocd",
