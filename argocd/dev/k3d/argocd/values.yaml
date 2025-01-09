@@ -1,0 +1,74 @@
+global:
+  hostAliases:
+    - ip: 10.96.0.100
+      hostnames:
+        - argocd.localhost
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 756Mi
+
+applicationSet:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 48Mi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 48Mi
+
+server:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 48Mi
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argocd.localhost
+    tls: true
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned-ca-issuer
+
+  volumeMounts:
+    - name: selfsigned-ca-certificates
+      mountPath: /etc/ssl/certs
+
+  volumes:
+    - name: selfsigned-ca-certificates
+      secret:
+        items:
+          - key: ca.crt
+            path: selfsigned-ca-certificates.crt
+        defaultMode: 420
+        secretName: selfsigned-ca
+
+# CRDs are managed outside of this helm chart
+crds:
+  install: true
+  keep: true
+
+configs:
+  cm:
+    url: https://argocd.localhost
+    application.resourceTrackingMethod: annotation
+    statusbadge.enabled: true
+    exec.enabled: true
+    kustomize.buildOptions: "--enable-helm"
+    timeout.reconciliation: 5s
+    admin.enabled: "true"
+    users.anonymous.enabled: "true"  # Enable anonymous access
+
+  params:
+    server.insecure: true
+
+  rbac:
+    policy.csv: |
+      g, authors, role:admin
+    policy.default: role:readonly
