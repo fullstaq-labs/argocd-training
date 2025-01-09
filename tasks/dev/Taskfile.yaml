@@ -130,11 +130,11 @@ tasks:
     cmds:
       - cmd: |
           for app in {{.ARGOCD_APPLICATIONS}}; do
-          argocd login --core
-          while ! argocd app get $app &> /dev/null; do
-            gum spin --show-output --title "Waiting for $app to be available..." -- sleep 5
-          done
-          gum log --level=info "$app is available"
+            argocd login --core
+            while ! argocd app get $app &> /dev/null; do
+              gum spin --show-output --title "Waiting for $app to be available..." -- sleep 5
+            done
+            gum log --level=info "$app is available"
           done
       - task: sync
         vars:
