@@ -438,7 +438,7 @@ Repository that holds the contents for an ArgoCD training.
                 factor: 1
           source:
             repoURL: https://github.com/fullstaq-labs/argocd-training.git
-            targetRevision: feat/improve-training
+            targetRevision: feat/improve-setup
             path: "{{.path.path}}"
     ```
 
