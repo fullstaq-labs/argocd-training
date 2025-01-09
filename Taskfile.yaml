@@ -56,43 +56,6 @@ tasks:
     cmds:
       - task: dev:sync-all-apps
 
-  setup-moodle:
-    desc: "Pull the Moodle Helm chart for local development"
-    vars:
-      CHART_REPO: "https://gitlab.avetica.net/kubernetes-platform/helm-charts/moodle-helm-chart.git"
-      CHART_PATH: "moodle-base/dev/talos/moodle/charts"
-      GIT_REPO_WITH_AUTH: "https://oauth2:{{.PERSONAL_ACCESS_TOKEN}}@gitlab.avetica.net/kubernetes-platform/helm-charts/moodle-helm-chart.git"
-    cmds:
-      # Remove existing chart if it exists
-      - rm -rf {{.CHART_PATH}}
-
-      # Create directory if it doesn't exist
-      - mkdir -p {{.CHART_PATH}}
-
-      # Clone the chart repository
-      - gum spin --show-error --title "Cloning Moodle Helm chart..." -- git clone {{.GIT_REPO_WITH_AUTH}} {{.CHART_PATH}}
-
-      - gum log --level info "Moodle chart has been pulled to {{.CHART_PATH}}"
-
-      # Create kustomization.yaml if it doesn't exist
-      - |
-        if [ ! -f moodle-base/dev/talos/moodle/kustomization.yaml ]; then
-          cat > moodle-base/dev/talos/moodle/kustomization.yaml << EOF
-        apiVersion: kustomize.config.k8s.io/v1beta1
-        kind: Kustomization
-
-        helmCharts:
-        - name: moodle
-          releaseName: moodle
-          repo: ./charts/moodle
-          version: 1.0.0
-          valuesFile: values.yaml
-
-        namespace: moodle
-        EOF
-          gum log --level info "Created kustomization.yaml"
-        fi
-
   create-aliasses:
     desc: "Create kubectl aliasses"
     cmds:

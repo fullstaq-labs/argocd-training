@@ -126,7 +126,7 @@ tasks:
       - task: argocd:check-tools
     vars:
       ARGOCD_APPLICATIONS:
-        sh: echo 'argocd/local-path-provisioner-dev-talos-local-path-storage argocd/ingress-nginx-dev-talos-ingress-nginx argocd/cert-manager-dev-talos-cert-manager argocd/mysql-dev-talos-mysql'
+        sh: echo 'argocd/local-path-provisioner-dev-talos-local-path-storage argocd/ingress-nginx-dev-talos-ingress-nginx argocd/cert-manager-dev-talos-cert-manager'
     cmds:
       - cmd: |
           for app in {{.ARGOCD_APPLICATIONS}}; do
