@@ -1,0 +1,47 @@
+machine:
+  features:
+    hostDNS:
+      # # Necessary to run Talos within docker
+      forwardKubeDNSToHost: true
+
+  kubelet:
+    # # The `extraConfig` field is used to provide kubelet configuration overrides.
+    extraConfig:
+        serverTLSBootstrap: true
+
+  network:
+      extraHostEntries:
+      - ip: 172.20.0.0 # The IP of Ingress-nginx LoadBalancer.
+        aliases:
+        - registry.localhost
+
+  registries:
+    mirrors:
+      registry.localhost:
+        endpoints:
+          - https://registry.localhost/v2/
+    config:
+      registry.localhost:
+        tls:
+          insecureSkipVerify: true
+
+cluster:
+  # # Allow workload to run on ControlPlane
+  allowSchedulingOnControlPlanes: true
+
+  # # Disable default CNI in order to use Cilium
+  network:
+    cni:
+      name: none
+  proxy:
+    disabled: true
+
+  apiServer:
+    admissionControl:
+      - name: PodSecurity # Name is the name of the admission controller.
+        # Configuration is an embedded configuration object to be used as the plugin's
+        configuration:
+          exemptions:
+            namespaces:
+              - monitoring
+              - promtail

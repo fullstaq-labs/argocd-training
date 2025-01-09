@@ -9,9 +9,9 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/fullstaq-labs/argocd-training.git
-        revision: feat/improve-training
+        revision: feat/improve-setup
         directories:
-          - path: "*/dev/k3d/*"
+          - path: "*/dev/talos/*"
         values:
           service: "{{index .path.segments 0}}"
           stage: "{{index .path.segments 1}}"
@@ -31,7 +31,7 @@ spec:
     spec:
       project: "customer"
       destination:
-        name: '{{if eq .values.cluster "k3d"}}in-cluster{{else}}{{.values.cluster}}{{end}}'
+        name: '{{if eq .values.cluster "talos"}}in-cluster{{else}}{{.values.cluster}}{{end}}'
         namespace: "{{.values.namespace}}"
       syncPolicy:
         syncOptions:
