@@ -8,29 +8,26 @@
     "ghcr.io/rio/features/k3d": {},
     "ghcr.io/rio/features/k9s": {},
     "ghcr.io/rio/features/kustomize": {},
+    "ghcr.io/rio/features/skaffold": {},
     "ghcr.io/devcontainers-contrib/features/kind:1": {},
     "ghcr.io/eitsupi/devcontainer-features/jq-likes:2": {
       "yqVersion": "latest",
       "jqVersion": "latest"
     },
-    "ghcr.io/rio/features/skaffold": {},
     "ghcr.io/audacioustux/devcontainers/cilium:1": {},
     "ghcr.io/devcontainers-contrib/features/go-task": {},
     "ghcr.io/devcontainers/features/docker-in-docker": {},
     "ghcr.io/devcontainers-contrib/features/argo-cd": {},
     "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube": {
-      "minikube": "none",
-      "version": "1.31"
+      "minikube": "none"
     }
   },
-  "postStartCommand": [
-    "/usr/local/py-utils/bin/pre-commit",
-    "install",
-    "--install-hooks"
-  ],
+  "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && /usr/local/py-utils/bin/pre-commit install --install-hooks",
+  "postStartCommand": "task down",
   "runArgs": [
-    "--add-host=argocd.localhost:127.0.0.1"
+    "--add-host=argocd.localhost:127.0.0.1",
+    "--add-host=registry.localhost:127.0.0.1"
   ],
   "appPort": [
     80,
