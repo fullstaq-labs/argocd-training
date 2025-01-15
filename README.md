@@ -42,6 +42,13 @@ Repository that holds the contents for an ArgoCD training.
     kubectl get pods
     ```
 
+    If you want a more user friendly interface, it's possible to use k9s.\
+    To open k9s, simply execute the command below:
+    ```bash
+    k9s
+    ```
+    If you wan't to exit, use the shortkey **ctrl + c**.
+
 4.  If all pods are in the Running state we can proceed.\
     Now let's check if you can reach ArgoCD ui, which is available at the url https://argocd.localhost
 
